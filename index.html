@@ -1,0 +1,5588 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080611">
+<title>The Guardian Eye</title>
+<style>
+  :root{
+    --bg-1:#05030b;
+    --bg-2:#0f0b1d;
+    --bg-3:#1b1432;
+    --gold:#d5b36a;
+    --gold-soft:rgba(213,179,106,.34);
+    --violet:#7c5cff;
+    --cyan:#77e6ff;
+    --rose:#ff8dbd;
+    --white:#f5f1e8;
+    --glass:rgba(255,255,255,.08);
+    --glass-2:rgba(255,255,255,.12);
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+    --radius:24px;
+    --safe-b:env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    margin:0;
+    color:var(--white);
+    background:
+      radial-gradient(circle at 50% 18%, rgba(124,92,255,.16), transparent 24%),
+      radial-gradient(circle at 18% 30%, rgba(119,230,255,.07), transparent 28%),
+      radial-gradient(circle at 82% 18%, rgba(255,141,189,.06), transparent 24%),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 42%, var(--bg-3) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif;
+    overflow:hidden;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+  }
+
+  /* atmospheric background */
+  .sky, .sky::before, .sky::after{
+    content:"";
+    position:fixed; inset:-20%;
+    pointer-events:none;
+  }
+  .sky{
+    background:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.65), transparent 60%),
+      radial-gradient(1.5px 1.5px at 75% 25%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(2px 2px at 45% 60%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1.5px 1.5px at 66% 68%, rgba(255,255,255,.45), transparent 60%),
+      radial-gradient(1.5px 1.5px at 10% 72%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1.5px 1.5px at 88% 58%, rgba(255,255,255,.36), transparent 60%);
+    animation: drift 28s linear infinite;
+    opacity:.65;
+    filter: blur(.2px);
+  }
+  .sky::before{
+    background:
+      conic-gradient(from 0deg at 50% 50%, transparent 0 25%, rgba(255,255,255,.02) 26% 40%, transparent 41% 100%);
+    animation: rotateSlow 55s linear infinite;
+    opacity:.65;
+  }
+  .sky::after{
+    background:
+      radial-gradient(circle at 50% 50%, rgba(124,92,255,.18), transparent 22%),
+      radial-gradient(circle at 50% 50%, rgba(119,230,255,.08), transparent 35%);
+    filter: blur(60px);
+    animation: pulseBg 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {from{transform:translate3d(0,0,0)}to{transform:translate3d(-2%,2%,0)}}
+  @keyframes rotateSlow {from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes pulseBg {from{opacity:.7; transform:scale(1)}to{opacity:1; transform:scale(1.06)}}
+
+  #app{
+    position:relative;
+    z-index:2;
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px 16px calc(24px + var(--safe-b));
+    perspective:1400px;
+  }
+
+  .shell{
+    position:relative;
+    width:min(100%, 430px);
+    min-height:min(92vh, 860px);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    gap:14px;
+  }
+
+  .orbital-ring{
+    position:absolute; top:44px; left:50%;
+    width:310px; height:310px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    border:1px solid rgba(213,179,106,.14);
+    box-shadow: 0 0 80px rgba(124,92,255,.12), inset 0 0 60px rgba(255,255,255,.03);
+    animation: ringSpin 20s linear infinite;
+    pointer-events:none;
+  }
+  .orbital-ring::before,.orbital-ring::after{
+    content:"";
+    position:absolute; inset:18px;
+    border-radius:50%;
+    border:1px dashed rgba(255,255,255,.08);
+  }
+  .orbital-ring::after{inset:40px; animation: ringSpinReverse 24s linear infinite}
+  @keyframes ringSpin {from{transform:translateX(-50%) rotate(0deg)}to{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes ringSpinReverse {from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+
+  .glass{
+    width:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.06));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.06);
+    border-radius:var(--radius);
+    backdrop-filter: blur(18px) saturate(1.1);
+    -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  }
+
+  .hero{
+    position:relative;
+    width:100%;
+    min-height:368px;
+    padding:36px 20px 18px;
+    overflow:hidden;
+  }
+
+  .hero::before{
+    content:"";
+    position:absolute; inset:auto -10% 18% -10%;
+    height:180px;
+    background:radial-gradient(circle at 50% 50%, rgba(119,230,255,.12), transparent 58%);
+    filter:blur(16px);
+    pointer-events:none;
+  }
+
+  .eye-wrap{
+    position:relative;
+    margin:8px auto 20px;
+    width:240px;
+    height:180px;
+    display:grid;
+    place-items:center;
+    transform-style:preserve-3d;
+  }
+  .eye-wrap.tilt{
+    animation: eyeFloat 4.8s ease-in-out infinite;
+  }
+  @keyframes eyeFloat{
+    0%,100%{transform:rotateX(9deg) rotateY(-9deg) translateY(0)}
+    50%{transform:rotateX(-2deg) rotateY(9deg) translateY(-8px)}
+  }
+
+  .aura{
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(119,230,255,.18), transparent 32%),
+      radial-gradient(circle at 50% 50%, rgba(124,92,255,.22), transparent 54%),
+      radial-gradient(circle at 50% 50%, rgba(213,179,106,.12), transparent 70%);
+    filter:blur(18px);
+    transform:scale(1.06);
+    animation: auraPulse 3s ease-in-out infinite alternate;
+  }
+  @keyframes auraPulse{from{opacity:.75; transform:scale(1)}to{opacity:1; transform:scale(1.08)}}
+
+  #eyeSvg{
+    width:100%;
+    height:auto;
+    filter: drop-shadow(0 10px 32px rgba(124,92,255,.25))
+            drop-shadow(0 0 28px rgba(119,230,255,.16));
+    transform-style:preserve-3d;
+  }
+  .irisGlow{ animation: irisGlow 2.8s ease-in-out infinite alternate; }
+  @keyframes irisGlow{from{filter:brightness(1)}to{filter:brightness(1.15)}}
+
+  .blink .lid-top{ transform:translateY(34px) scaleY(1.2); }
+  .blink .lid-bottom{ transform:translateY(-34px) scaleY(1.2); }
+  .eye-closed .lid-top{ transform:translateY(54px) scaleY(1.55); }
+  .eye-closed .lid-bottom{ transform:translateY(-54px) scaleY(1.55); }
+  .lid-top,.lid-bottom{ transition:transform 1.4s cubic-bezier(.2,.8,.2,1) }
+
+  .title{
+    margin:6px 0 8px;
+    text-align:center;
+    font-size:clamp(26px, 5.7vw, 34px);
+    font-weight:700;
+    letter-spacing:.02em;
+    line-height:1.1;
+  }
+  .subtitle{
+    margin:0 auto;
+    max-width:300px;
+    text-align:center;
+    font-size:14px;
+    line-height:1.55;
+    color:rgba(245,241,232,.82);
+  }
+
+  .ritual-copy{
+    margin-top:4px;
+    text-align:center;
+    font-size:15px;
+    line-height:1.6;
+    color:rgba(245,241,232,.88);
+    min-height:72px;
+  }
+
+  .chips{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+    width:100%;
+    margin-top:10px;
+  }
+  .chip{
+    position:relative;
+    border:none;
+    border-radius:18px;
+    padding:14px 14px;
+    background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.06));
+    color:var(--white);
+    border:1px solid rgba(255,255,255,.1);
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.01em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    transition:transform .18s ease, border-color .2s ease, background .2s ease;
+  }
+  .chip:active{transform:scale(.98)}
+  .chip span{display:block; font-size:12px; font-weight:500; opacity:.7; margin-top:2px}
+  .chip.selected{
+    border-color:rgba(213,179,106,.7);
+    background:linear-gradient(180deg, rgba(213,179,106,.2), rgba(255,255,255,.08));
+    box-shadow:0 0 0 1px rgba(213,179,106,.16), 0 12px 32px rgba(213,179,106,.08);
+  }
+
+  .wide-btn, .link-btn{
+    appearance:none;
+    border:none;
+    color:#130f08;
+    background:linear-gradient(180deg, #f0d296 0%, #c99d51 100%);
+    padding:14px 18px;
+    border-radius:999px;
+    width:100%;
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    box-shadow:0 10px 28px rgba(201,157,81,.24), inset 0 1px 0 rgba(255,255,255,.5);
+    transition:transform .2s ease, filter .2s ease, opacity .2s ease;
+  }
+  .wide-btn:active{transform:translateY(1px) scale(.996)}
+  .wide-btn.secondary{
+    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+    color:var(--white);
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:none;
+    text-transform:none;
+    letter-spacing:.01em;
+    font-weight:600;
+  }
+  .wide-btn.ghost{
+    background:transparent;
+    color:rgba(245,241,232,.86);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:none;
+  }
+
+  .panel{
+    width:100%;
+    padding:16px;
+    display:none;
+  }
+  .panel.active{display:block; animation:fadeIn .45s ease both}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+
+  .daily-note{
+    font-size:13px;
+    color:rgba(245,241,232,.65);
+    text-align:center;
+    margin-top:8px;
+  }
+
+  .status-row{
+    display:flex; gap:10px; align-items:center; justify-content:center;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .status-pill{
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:12px;
+    color:rgba(245,241,232,.88);
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.05);
+  }
+
+  .card-stage{
+    position:relative;
+    width:100%;
+    min-height:500px;
+    padding:18px 16px 16px;
+    display:none;
+  }
+  .card-stage.active{display:block}
+  .stage-copy{
+    text-align:center;
+    margin:2px auto 18px;
+    font-size:15px;
+    line-height:1.55;
+    color:rgba(245,241,232,.9);
+    min-height:46px;
+  }
+
+  .card-3d-wrap{
+    perspective:1500px;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:330px;
+    margin-top:8px;
+  }
+  .tarot-card{
+    position:relative;
+    width:228px;
+    height:358px;
+    transform-style:preserve-3d;
+    transition:transform 1.25s cubic-bezier(.2,.8,.2,1);
+  }
+  .tarot-card.reveal{ transform:rotateY(180deg) translateZ(14px); }
+  .tarot-card.float{ animation:cardFloat 4.5s ease-in-out infinite }
+  @keyframes cardFloat{
+    0%,100%{transform:translateY(0) rotateX(2deg)}
+    50%{transform:translateY(-10px) rotateX(-2deg)}
+  }
+
+  .card-face{
+    position:absolute; inset:0;
+    border-radius:24px;
+    backface-visibility:hidden;
+    overflow:hidden;
+    box-shadow:0 28px 60px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .card-back{
+    background:
+      radial-gradient(circle at 50% 50%, rgba(124,92,255,.24), transparent 32%),
+      linear-gradient(180deg, #0e0b18 0%, #171127 46%, #100c1a 100%);
+    border:1px solid rgba(213,179,106,.34);
+  }
+  .card-back::before, .card-back::after{
+    content:"";
+    position:absolute; inset:14px;
+    border-radius:18px;
+    border:1px solid rgba(213,179,106,.33);
+  }
+  .card-back::after{
+    inset:30px; border-style:dashed; border-color:rgba(245,241,232,.12)
+  }
+  .back-symbol{
+    position:absolute; inset:0;
+    display:grid; place-items:center;
+    opacity:.95;
+    transform:translateZ(1px);
+  }
+  .card-front{
+    transform:rotateY(180deg);
+    background:
+      radial-gradient(circle at 50% 14%, rgba(119,230,255,.12), transparent 30%),
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+      linear-gradient(180deg, #0b0813, #19122c 52%, #100c1a);
+    border:1px solid rgba(213,179,106,.44);
+    padding:14px;
+  }
+
+  .frame{
+    position:absolute; inset:12px;
+    border-radius:18px;
+    border:1px solid rgba(213,179,106,.45);
+    pointer-events:none;
+  }
+
+  .card-art{
+    position:relative;
+    height:178px;
+    border-radius:16px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(255,255,255,.12), transparent 26%),
+      radial-gradient(circle at 50% 50%, var(--art2, rgba(124,92,255,.16)), transparent 56%),
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.06);
+    display:grid; place-items:center;
+  }
+
+  .card-name{
+    margin-top:14px;
+    font-size:23px;
+    font-weight:800;
+    letter-spacing:.02em;
+    text-align:center;
+    color:#f2dfb2;
+  }
+  .card-tag{
+    text-align:center;
+    margin-top:4px;
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:rgba(245,241,232,.64);
+  }
+  .card-guidance{
+    margin-top:12px;
+    font-size:15px;
+    line-height:1.65;
+    text-align:center;
+    color:rgba(245,241,232,.92);
+  }
+  .card-action{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:16px;
+    text-align:center;
+    font-size:14px;
+    line-height:1.5;
+    color:rgba(245,241,232,.95);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  .footer-actions{
+    width:100%;
+    display:grid;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  .closing-overlay, .awakening-overlay, .limit-overlay{
+    position:fixed; inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:40;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(124,92,255,.18), rgba(5,3,11,.82) 45%, rgba(5,3,11,.96) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .awakening-overlay.show, .closing-overlay.show, .limit-overlay.show{display:flex; animation:fadeIn .5s ease both}
+  .overlay-card{
+    width:min(100%, 420px);
+    padding:28px 22px;
+    text-align:center;
+  }
+  .overlay-eye{
+    width:180px;
+    margin:0 auto 18px;
+    animation: awakenEye 3.6s ease-in-out infinite alternate;
+  }
+  @keyframes awakenEye{
+    from{transform:scale(.96) rotateX(0deg)}
+    to{transform:scale(1.04) rotateX(10deg)}
+  }
+  .overlay-title{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:.04em;
+    margin:0 0 12px;
+  }
+  .overlay-text{
+    font-size:15px;
+    line-height:1.8;
+    color:rgba(245,241,232,.88);
+    margin:0 auto 18px;
+    max-width:330px;
+  }
+  .overlay-small{
+    font-size:13px;
+    color:rgba(245,241,232,.65);
+  }
+
+  .music-btn{
+    position:fixed;
+    right:16px;
+    bottom:calc(16px + var(--safe-b));
+    z-index:30;
+    width:54px; height:54px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+    color:var(--white);
+    display:grid;
+    place-items:center;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    font-size:21px;
+  }
+  .music-btn.hidden{display:none}
+
+  .tiny{
+    font-size:12px;
+    color:rgba(245,241,232,.58);
+    text-align:center;
+    margin-top:2px;
+    line-height:1.4;
+  }
+
+  .hidden{display:none !important}
+
+  .eye-wrap{display:flex;justify-content:center;align-items:center;}
+  #eyeSvg{width:min(96%, 460px);margin:0 auto;display:block;}
+  .home-question{margin:20px auto 0; max-width:18ch; line-height:1.08; text-align:center;}.home-question span{display:block;}.home-question span + span{margin-top:4px;}
+  .pupil-core,.pupil-halo,.pupil-glint,.pupil-glint-2,.iris-ring{
+    transform-origin:210px 124px;
+    transform-box:fill-box;
+    animation:pupilBreathe 4.6s ease-in-out infinite;
+  }
+  @keyframes pupilBreathe{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+  }
+  .chip.absorbing{
+    animation:chipAbsorb 1.05s cubic-bezier(.18,.78,.2,1) forwards;
+    pointer-events:none;
+  }
+  @keyframes chipAbsorb{0%{transform:scale(1) translateY(0);opacity:1;filter:blur(0);box-shadow:0 0 0 rgba(213,179,106,0)}22%{transform:scale(.97) translateY(-1px);opacity:.98;box-shadow:0 0 18px rgba(213,179,106,.12)}56%{transform:scale(.86) translateY(-10px);opacity:.78;filter:blur(1.5px)}100%{transform:scale(.68) translateY(-24px);opacity:0;filter:blur(10px)}}
+  .absorb-notice{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .42s ease;
+    z-index:20;
+  }
+  .absorb-notice.show{opacity:1;}
+  @keyframes absorbMessageLift{from{opacity:0; transform:translateY(10px) scale(.985)}to{opacity:1; transform:translateY(0) scale(1)}}
+  .absorb-notice span{transform:translateY(6px);animation:absorbMessageLift .6s ease forwards;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:42px;
+    padding:10px 18px;
+    border-radius:999px;
+    background:rgba(8,6,16,.38);
+    border:1px solid rgba(213,179,106,.18);
+    color:rgba(245,241,232,.92);
+    font:italic 600 14px/1.2 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif;
+    letter-spacing:.02em;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
+  }
+
+</style>
+<style type="text/css">.qa-sdk-wrapper {
+  position: fixed;
+  width: 400px;
+  right: -600px;
+  max-height: 530px;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  background: #fff;
+}
+
+.qa-sdk-close-btn {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.qa-sdk-close-btn:hover {
+  border-radius: 50%;
+  background-color: #d5d9df;
+}
+
+#qa-sdk-iframe {
+  width: 400px;
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .qa-sdk-wrapper{
+    width: 356px;
+  }
+  #qa-sdk-iframe {
+    width: 356px;
+  }
+}
+</style>
+<style id="homepage-v2-refine">
+  .hero.glass{background:transparent;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;overflow:visible;}
+  .hero{padding:8px 10px 8px;min-height:360px;}
+  .title,.subtitle{display:none !important;}
+  .status-row{display:none !important;}
+  .eye-wrap{margin:-8px auto 10px;width:min(420px,98vw);height:auto;aspect-ratio:4 / 3;cursor:pointer;position:relative;}
+  .eye-wrap.tilt{animation:eyeFloat 7.2s ease-in-out infinite;}
+  @keyframes eyeFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.01)}}
+  .aura{filter:blur(24px);animation:auraPulse 4.8s ease-in-out infinite alternate;}
+  @keyframes auraPulse{from{opacity:.78; transform:scale(1.02)}to{opacity:1; transform:scale(1.1)}}
+  #eyeSvg{width:100%;height:auto;filter:drop-shadow(0 18px 46px rgba(124,92,255,.16)) drop-shadow(0 0 36px rgba(119,230,255,.10));overflow:visible;}
+  .pupil-core,.pupil-halo,.pupil-glint,.pupil-glint-2,.iris-ring{transform-origin:210px 124px;transform-box:fill-box;}
+  .pupil-core{animation:pupilBreathe 4.8s ease-in-out infinite;}
+  .pupil-halo{animation:pupilHaloBreathe 4.8s ease-in-out infinite;}
+  .pupil-glint,.pupil-glint-2{animation:glintFloat 4.8s ease-in-out infinite;}
+  @keyframes pupilBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+  @keyframes pupilHaloBreathe{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.08);opacity:1}}
+  @keyframes glintFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.04)}}
+  .eye-wrap.touch-pulse #eyeSvg{animation:eyeTouchPulse .42s ease;}
+  .start-closed .lid-top{transform:translateY(62px) scaleY(1.7);}
+  .start-closed .lid-bottom{transform:translateY(-62px) scaleY(1.7);}
+  @keyframes eyeTouchPulse{0%{transform:scale(1)}35%{transform:scale(1.025)}100%{transform:scale(1)}}
+  .blink .lid-top{transform:translateY(22px) scaleY(1.08);}
+  .blink .lid-bottom{transform:translateY(-22px) scaleY(1.08);}
+  .eye-closed .lid-top{transform:translateY(57px) scaleY(1.6);}
+  .eye-closed .lid-bottom{transform:translateY(-57px) scaleY(1.6);}
+  .lid-top,.lid-bottom{transition:transform .78s cubic-bezier(.2,.84,.24,1);}
+  #homePanel.panel{padding:0;position:relative;z-index:3;}
+  .home-question{margin:0 auto 14px;max-width:320px;min-height:0;text-align:center;color:rgba(245,241,232,.93);font:600 clamp(22px,5.6vw,30px)/1.14 "Iowan Old Style","Baskerville","Palatino Linotype",Georgia,serif;letter-spacing:.012em;animation:homeQuestionReveal 1.1s ease both .32s;opacity:0;}
+  @keyframes homeQuestionReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .chips{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:0;}
+  .chip{padding:13px 12px 12px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.055));border:1px solid rgba(255,255,255,.10);font-size:15px;font-weight:700;letter-spacing:.01em;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;place-content:center;}
+  .chip span{display:block;font-size:11px;font-weight:500;opacity:.36;margin-top:0;line-height:1.22;}
+  .chip.selected{border-color:rgba(232,207,151,.96);background:linear-gradient(180deg, rgba(213,179,106,.22), rgba(255,255,255,.08));box-shadow:0 0 0 2px rgba(232,207,151,.54),0 10px 26px rgba(213,179,106,.08), inset 0 0 0 1px rgba(255,255,255,.05);}
+  .home-prayer-inline{margin-top:15px;}
+  .mind-input{width:100%;height:54px;padding:0 20px;border-radius:999px;background:rgba(255,255,255,.055);color:#f5f1e8;border:1px solid rgba(255,255,255,.1);outline:none;font:500 15px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-appearance:none;appearance:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);} .mind-input, .mind-input:focus{pointer-events:auto;}
+  .mind-input::placeholder{color:rgba(245,241,232,.56);}
+  .mind-input:focus{border-color:rgba(213,179,106,.38);background:rgba(255,255,255,.07);box-shadow:0 0 0 3px rgba(213,179,106,.10);}
+  .home-begin-wrap{margin-top:14px;position:relative;z-index:3;}
+  #beginBtn{letter-spacing:.11em;}
+  .daily-note{margin-top:18px;font-size:10px;color:rgba(245,241,232,.26);text-align:center;letter-spacing:.08em;}
+  /* Homepage hard-fix: remove lingering eye frame + restore clickability */
+  .hero.hero-home, .hero.hero-home::before, #homePanel, #homePanel::before, #homePanel::after{
+    border:none !important;
+    box-shadow:none !important;
+    background-image:none !important;
+  }
+  .hero.hero-home{overflow:visible !important; min-height:auto; padding:0 16px 12px !important;}
+  .eye-wrap{
+    width:min(430px,104vw) !important;
+    height:204px !important;
+    margin:-8px auto 2px !important;
+    overflow:visible !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+    pointer-events:none !important;
+  }
+  #eyeSvg{
+    display:block;
+    overflow:visible !important;
+    pointer-events:none !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .aura{pointer-events:none !important;}
+  #homePanel.panel, .chips, .home-prayer-inline, .mind-input-row, .home-begin-wrap, .daily-note{
+    position:relative;
+    z-index:12 !important;
+  }
+  .mind-input-row{display:block;}
+  .mind-input{padding:0 18px; height:52px;}
+  .voice-btn{display:none !important;}
+
+  @media (max-width:420px){
+    .eye-wrap{width:min(376px,98vw);margin:-6px auto 12px;}
+    .home-question{font-size:24px;max-width:280px;}
+    .chip{min-height:70px;font-size:14px;padding:12px 11px 11px;}
+    .chip span{font-size:10.5px;}
+    .mind-input{height:52px;font-size:14px;}
+  }
+
+  /* Homepage eye refinement */
+  .hero.hero-home{
+    width:100%;
+    min-height:452px;
+    padding:6px 18px 18px;
+    overflow:visible;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    border-radius:0 !important;
+  }
+  .hero.hero-home::before{
+    inset:auto -18% 22% -18%;
+    height:240px;
+    background:radial-gradient(circle at 50% 50%, rgba(119,230,255,.13), transparent 58%);
+    filter:blur(22px);
+  }
+  .orbital-ring{display:none !important;}
+  .shell{gap:0;}
+  .eye-wrap{
+    margin:-16px auto 18px;
+    width:min(486px, 114vw);
+    height:246px;
+    overflow:visible;
+    perspective:1200px;
+    position:relative;
+    z-index:1;
+    pointer-events:none;
+  }
+  .eye-wrap.tilt{animation:eyeRise 1.15s cubic-bezier(.18,.82,.24,1) both;}
+  @keyframes eyeRise{
+    0%{opacity:0; transform:translateY(24px) scale(.9);}
+    100%{opacity:1; transform:translateY(0) scale(1);}
+  }
+  #eyeSvg{
+    width:100%;
+    height:auto;
+    transform-origin:50% 50%;
+    animation:eyeBreathe 5.8s ease-in-out infinite 1.1s;
+    filter: drop-shadow(0 18px 48px rgba(124,92,255,.22)) drop-shadow(0 0 40px rgba(119,230,255,.11));
+    pointer-events:none;
+    overflow:visible;
+  }
+  #eyeTapArea{pointer-events:auto;cursor:pointer;}
+  @keyframes eyeBreathe{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.028);}
+  }
+  .aura{
+    inset:-9% -10%;
+    transform:scale(1.12);
+    filter:blur(24px);
+    animation:auraPulse 4.2s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  @keyframes auraPulse{from{opacity:.68; transform:scale(1.04)}to{opacity:1; transform:scale(1.16)}}
+  .pupil-core,.pupil-halo,.pupil-glint,.pupil-glint-2,.iris-ring{transform-origin:210px 124px;transform-box:fill-box;}
+  .pupil-core{animation:pupilBreathe 4.8s ease-in-out infinite;}
+  .pupil-halo{animation:pupilHaloBreathe 4.8s ease-in-out infinite;}
+  .pupil-glint,.pupil-glint-2{animation:glintFloat 4.8s ease-in-out infinite;}
+  .home-question{
+    margin:0 auto 18px;
+    max-width:19ch;
+    min-height:0;
+    color:rgba(245,241,232,.95);
+    font:600 clamp(23px,5.5vw,30px)/1.08 "Iowan Old Style","Baskerville","Palatino Linotype",Georgia,serif;
+    letter-spacing:.01em;
+    text-align:center;
+    position:relative;
+    z-index:3;
+  }
+  .home-question span{display:block;}
+  .home-question span + span{margin-top:5px;}
+  .chips{
+    margin-top:0;
+    gap:12px;
+    position:relative;
+    z-index:3;
+  }
+  .chip{
+    min-height:82px;
+    padding:14px 14px 12px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    line-height:1.08;
+  }
+  .chip span{
+    margin-top:6px;
+    max-width:14ch;
+    font-size:11px;
+    line-height:1.22;
+    opacity:.40;
+  }
+  .home-prayer-inline{margin-top:16px;position:relative;z-index:3;}
+  .mind-input{height:56px;border-radius:999px;padding:0 22px;}
+  .home-begin-wrap{margin-top:16px;position:relative;z-index:3;}
+  .daily-note{margin-top:18px;font-size:10px;color:rgba(245,241,232,.17);text-align:center;letter-spacing:.09em;position:relative;z-index:3;}
+  .shell,.hero.hero-home,#homePanel.panel{background:transparent !important;border:none !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-radius:0 !important;outline:none !important;}
+  #homePanel.panel{
+    position:relative;
+    z-index:12;
+    width:min(100%, 560px);
+    margin:0 auto;
+    pointer-events:auto !important;
+  }
+  .chips,.chip,.home-prayer-inline,.mind-input-row,.mind-input,.home-begin-wrap,#beginBtn{
+    position:relative;
+    z-index:12;
+    pointer-events:auto !important;
+  }
+  #beginBtn{cursor:pointer;}
+  .eye-wrap,.eye-wrap::before,.eye-wrap::after{outline:none !important;border:none !important;box-shadow:none !important;}
+  .eye-wrap{margin:-18px auto 18px;width:min(438px,112vw);height:258px;}
+  #eyeSvg{animation:eyeBreathe 5.8s ease-in-out infinite 1.1s;pointer-events:none;overflow:visible;}
+  #eyeTapArea{pointer-events:auto;cursor:pointer;}
+  .eye-wrap.eye-looping .lid-top{animation:lidLoopTop 8.8s ease-in-out infinite;}
+  .eye-wrap.eye-looping .lid-bottom{animation:lidLoopBottom 8.8s ease-in-out infinite;}
+  @keyframes lidLoopTop{
+    0%,18%,40%,100%{transform:translateY(0) scaleY(1);}
+    48%,55%{transform:translateY(50px) scaleY(1.56);}
+  }
+  @keyframes lidLoopBottom{
+    0%,18%,40%,100%{transform:translateY(0) scaleY(1);}
+    48%,55%{transform:translateY(-50px) scaleY(1.56);}
+  }
+  .eye-wrap.blink .lid-top,.eye-wrap.blink .lid-bottom{animation:none !important;}
+  .eye-wrap.touch-pulse #eyeSvg{animation:eyeTouchPulse .42s ease, eyeBreathe 5.8s ease-in-out infinite 1.1s;}
+  .home-prayer-inline{margin-top:14px;position:relative;z-index:3;}
+  .mind-input-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:min(100%, 560px);
+    margin:0 auto;
+  }
+  .mind-input{
+    flex:1;
+    height:54px;
+    padding:0 20px;
+    border-radius:999px;
+  }
+  .voice-btn{width:52px;height:52px;flex:0 0 52px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));color:rgba(245,241,232,.92);font-size:18px;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);cursor:pointer;transition:transform .18s ease, border-color .18s ease, background .18s ease;}
+  .voice-btn:active{transform:scale(.97);}
+  .voice-btn:hover,.voice-btn.listening{border-color:rgba(213,179,106,.48);background:linear-gradient(180deg, rgba(213,179,106,.18), rgba(255,255,255,.05));}
+  .voice-btn.unsupported{opacity:.45;cursor:not-allowed;}
+  @media (max-width:420px){
+    .eye-wrap{width:min(404px,112vw);height:222px;margin:-10px auto 16px;}
+    .home-question{max-width:16.5ch;font-size:24px;}
+    .chips{gap:10px;}
+    .chip{min-height:78px;padding:13px 10px 11px;font-size:14px;}
+    .chip span{font-size:10px;max-width:13ch;}
+    .mind-input-row{width:100%;}
+    .mind-input{height:52px;font-size:14px;padding:0 16px;}
+    .voice-btn{width:50px;height:50px;flex-basis:50px;font-size:17px;}
+  }
+</style>
+
+
+
+
+
+
+
+
+
+<style id="mobile-scroll-fix-regenerated">
+  html, body{
+    height:auto !important;
+    min-height:100% !important;
+  }
+
+  body{
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #app{
+    min-height:100vh !important;
+    align-items:flex-start !important;
+    padding-top:18px !important;
+    padding-bottom:42px !important;
+  }
+
+  .shell{
+    min-height:auto !important;
+    padding-bottom:42px !important;
+  }
+
+  .card-stage,
+  .result-stage{
+    min-height:auto !important;
+    overflow:visible !important;
+    padding-bottom:28px !important;
+  }
+
+  .card-3d-wrap{
+    min-height:360px !important;
+    margin-bottom:10px !important;
+  }
+
+  .footer-actions,
+  .result-actions{
+    position:relative !important;
+    z-index:5 !important;
+    margin-top:22px !important;
+  }
+
+  @media (max-width: 768px){
+    #app{
+      padding-top:12px !important;
+      padding-bottom:30px !important;
+    }
+
+    .card-stage,
+    .result-stage{
+      padding-bottom:22px !important;
+    }
+
+    .footer-actions,
+    .result-actions{
+      margin-top:18px !important;
+      padding-bottom:12px !important;
+    }
+  }
+</style>
+
+
+<style id="hero-home-hide-fix">
+  .hero-home.prelude-mode .eye-wrap,
+  .hero-home.prelude-mode #homePanel,
+  .hero-home.prelude-mode #statusRow{
+    display:none !important;
+  }
+  .hero-home.prelude-mode{
+    min-height:auto !important;
+    padding-top:8px !important;
+    padding-bottom:8px !important;
+  }
+  .hero-home.stage-hidden{
+    display:none !important;
+  }
+</style>
+
+
+<style id="prelude-auto-flow-fix">
+  #preludePanel .ritual-copy{
+    max-width:26ch;
+    margin:0 auto 16px;
+  }
+  #preludePanel .footer-actions{
+    max-width:420px;
+    margin:14px auto 0;
+  }
+  #preludePanel .tiny{
+    margin-top:8px;
+    opacity:.72;
+  }
+</style>
+
+
+<style id="awakening-light-system">
+  .awakening-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .awakening-pill{
+    color:rgba(245,241,232,.62) !important;
+    background:rgba(255,255,255,.03) !important;
+    border:1px solid rgba(232,207,151,.08) !important;
+    font:600 11px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif !important;
+    letter-spacing:.16em !important;
+    text-transform:uppercase !important;
+    padding:10px 14px !important;
+  }
+  .awakening-dots{
+    display:flex;
+    gap:7px;
+    align-items:center;
+  }
+  .awakening-dots span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:rgba(232,207,151,.14);
+    box-shadow:0 0 0 rgba(232,207,151,0);
+    transition:background .35s ease, box-shadow .35s ease, transform .35s ease;
+  }
+  .awakening-dots span.on{
+    background:rgba(232,207,151,.86);
+    box-shadow:0 0 12px rgba(232,207,151,.30);
+    transform:scale(1.06);
+  }
+  .eye-wrap.awaken-1::before{opacity:.78;}
+  .eye-wrap.awaken-3::before{opacity:.92; filter:blur(28px);}
+  .eye-wrap.awaken-5::before{opacity:1; filter:blur(30px);}
+  .eye-wrap.awaken-5 #eyeSvg,
+  .eye-wrap.awaken-7 #eyeSvg{
+    filter:
+      drop-shadow(0 20px 42px rgba(124,92,255,.19))
+      drop-shadow(0 0 46px rgba(119,230,255,.16))
+      drop-shadow(0 6px 18px rgba(232,207,151,.12));
+  }
+</style>
+
+
+<style id="awakening-visual-polish">
+  .awakening-row{
+    margin-top:6px !important;
+    margin-bottom:12px !important;
+    gap:12px !important;
+  }
+
+  .awakening-pill{
+    color:rgba(245,241,232,.54) !important;
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02)) !important;
+    border:1px solid rgba(232,207,151,.07) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.03) !important;
+    font:600 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif !important;
+    letter-spacing:.18em !important;
+    padding:10px 14px !important;
+  }
+
+  .awakening-dots{
+    gap:8px !important;
+  }
+
+  .awakening-dots span{
+    width:5px !important;
+    height:5px !important;
+    background:rgba(232,207,151,.10) !important;
+    transition:
+      background .42s ease,
+      box-shadow .42s ease,
+      transform .42s ease,
+      opacity .42s ease !important;
+    opacity:.9;
+  }
+
+  .awakening-dots span.on{
+    background:rgba(232,207,151,.88) !important;
+    box-shadow:
+      0 0 10px rgba(232,207,151,.24),
+      0 0 22px rgba(232,207,151,.12) !important;
+    transform:scale(1.14) !important;
+    animation:awakeningDotPulse 3.2s ease-in-out infinite;
+  }
+
+  @keyframes awakeningDotPulse{
+    0%,100%{transform:scale(1.14); box-shadow:0 0 10px rgba(232,207,151,.24), 0 0 22px rgba(232,207,151,.12)}
+    50%{transform:scale(1.24); box-shadow:0 0 12px rgba(232,207,151,.34), 0 0 28px rgba(232,207,151,.16)}
+  }
+
+  .eye-wrap.awaken-1::before{
+    opacity:.82 !important;
+    filter:blur(28px) !important;
+  }
+
+  .eye-wrap.awaken-3::before{
+    opacity:.94 !important;
+    filter:blur(31px) !important;
+  }
+
+  .eye-wrap.awaken-5::before,
+  .eye-wrap.awaken-7::before{
+    opacity:1 !important;
+    filter:blur(33px) !important;
+  }
+
+  .eye-wrap.awaken-3 #eyeSvg{
+    filter:
+      drop-shadow(0 20px 42px rgba(124,92,255,.16))
+      drop-shadow(0 0 38px rgba(119,230,255,.11))
+      drop-shadow(0 6px 16px rgba(232,207,151,.08)) !important;
+  }
+
+  .eye-wrap.awaken-7 #eyeSvg{
+    filter:
+      drop-shadow(0 22px 46px rgba(124,92,255,.22))
+      drop-shadow(0 0 52px rgba(119,230,255,.18))
+      drop-shadow(0 8px 20px rgba(232,207,151,.12)) !important;
+  }
+
+  @media (max-width:420px){
+    .awakening-row{
+      margin-bottom:10px !important;
+      gap:10px !important;
+    }
+    .awakening-pill{
+      font-size:9px !important;
+      padding:9px 12px !important;
+    }
+    .awakening-dots span{
+      width:4px !important;
+      height:4px !important;
+    }
+    .hidden-sign-copy{
+      font-size:14px !important;
+    }
+    .hidden-sign-title{
+      font-size:21px !important;
+    }
+    .hidden-sign-text{
+      font-size:18px !important;
+    }
+  }
+</style>
+
+
+<style id="contextual-input-reveal">
+  .contextual-input{display:block !important;
+    margin-top:0 !important;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transform:translateY(-6px);
+    transition:max-height .36s ease, opacity .28s ease, transform .36s ease, margin-top .36s ease;
+  }
+  .contextual-input.show{
+    margin-top:10px !important;
+    max-height:132px;
+    opacity:1;
+    transform:translateY(0);
+  }
+.contextual-input-note{
+    margin-top:6px;
+    text-align:center;
+    color:rgba(245,241,232,.34);
+    font:500 10px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif;
+    letter-spacing:.04em;
+  }
+  @media (max-width:420px){
+    .contextual-input.show{
+      margin-top:9px !important;
+      max-height:126px;
+    }
+.contextual-input-note{
+      font-size:9.5px;
+    }
+  }
+</style>
+
+
+<style id="contextual-response-polish">
+  .absorb-notice{
+    padding:24px 18px !important;
+  }
+
+  .absorb-notice span{
+    max-width:min(32ch, 82vw) !important;
+    min-height:auto !important;
+    padding:13px 20px 14px !important;
+    text-align:center !important;
+    text-wrap:balance !important;
+    background:
+      linear-gradient(180deg, rgba(10,8,18,.28), rgba(10,8,18,.16)) !important;
+    border:1px solid rgba(213,179,106,.12) !important;
+    color:rgba(246,234,208,.96) !important;
+    font:italic 600 15px/1.32 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.01em !important;
+    box-shadow:
+      0 18px 40px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.03) !important;
+    backdrop-filter:blur(14px) !important;
+    -webkit-backdrop-filter:blur(14px) !important;
+  }
+
+  #preludePanel .ritual-copy{
+    max-width:24ch !important;
+    min-height:auto !important;
+    margin:0 auto 18px !important;
+    padding:0 10px !important;
+    text-align:center !important;
+    text-wrap:balance !important;
+    color:rgba(245,241,232,.92) !important;
+    font:italic 600 18px/1.42 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.006em !important;
+  }
+
+  #preludePanel .footer-actions{
+    margin-top:16px !important;
+  }
+
+  #preludePanel .tiny{
+    max-width:22ch;
+    margin:10px auto 0 !important;
+    color:rgba(245,241,232,.48) !important;
+    letter-spacing:.03em;
+  }
+
+  @media (max-width: 420px){
+    .absorb-notice{
+      padding:18px 14px !important;
+    }
+
+    .absorb-notice span{
+      max-width:min(28ch, 86vw) !important;
+      padding:12px 18px 13px !important;
+      font-size:14px !important;
+      line-height:1.34 !important;
+    }
+
+    #preludePanel .ritual-copy{
+      max-width:22ch !important;
+      padding:0 6px !important;
+      font-size:17px !important;
+      line-height:1.4 !important;
+    }
+  }
+</style>
+
+
+<style id="flip-result-share-polish">
+  .card-stage{
+    width:min(540px, 100%) !important;
+    margin:0 auto !important;
+    padding:10px 12px 22px !important;
+  }
+
+  .stage-copy{
+    margin:2px auto 14px !important;
+    max-width:24ch !important;
+    min-height:auto !important;
+    text-align:center !important;
+    color:rgba(245,241,232,.80) !important;
+    font:italic 600 15px/1.4 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.01em !important;
+    text-wrap:balance !important;
+  }
+
+  .card-3d-wrap{
+    min-height:346px !important;
+    margin-top:2px !important;
+    margin-bottom:8px !important;
+  }
+
+  .tarot-card{
+    width:236px !important;
+    height:370px !important;
+  }
+
+  .card-face{
+    border-radius:26px !important;
+    box-shadow:
+      0 28px 62px rgba(0,0,0,.40),
+      0 0 0 1px rgba(255,255,255,.06),
+      inset 0 1px 0 rgba(255,255,255,.05) !important;
+  }
+
+  .card-name{
+    margin-top:14px !important;
+    font:600 24px/1.06 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.015em !important;
+  }
+
+  .card-tag{
+    margin-top:6px !important;
+    font:600 10px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif !important;
+    letter-spacing:.18em !important;
+    color:rgba(245,241,232,.52) !important;
+  }
+
+  .card-guidance{
+    margin:14px auto 0 !important;
+    max-width:15.5ch !important;
+    font:600 20px/1.42 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    text-wrap:balance !important;
+    color:rgba(246,234,208,.95) !important;
+  }
+
+  .card-action{
+    width:min(196px, 82%) !important;
+    margin:14px auto 0 !important;
+    padding:12px 14px 11px !important;
+    border-radius:18px !important;
+    background:rgba(255,255,255,.04) !important;
+    border:1px solid rgba(232,207,151,.08) !important;
+    color:rgba(232,207,151,.92) !important;
+    font:500 13px/1.3 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.03) !important;
+  }
+  .card-action span{
+    display:inline-block;
+    margin-right:4px;
+    color:rgba(245,241,232,.44);
+    font:600 9px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .card-action em{
+    font-style:normal;
+    color:rgba(245,241,232,.26);
+    margin:0 6px;
+  }
+
+  .footer-actions{
+    width:min(420px, 92vw) !important;
+    margin:18px auto 0 !important;
+    gap:10px !important;
+  }
+
+  .result-stage{
+    width:min(540px, 100%) !important;
+    margin:0 auto !important;
+    padding:8px 12px 26px !important;
+  }
+
+  .result-copy{
+    margin:0 auto 14px !important;
+    max-width:25ch !important;
+    color:rgba(245,241,232,.82) !important;
+    font:italic 600 15px/1.38 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    text-wrap:balance !important;
+  }
+
+  .oracle-sign-card{
+    width:min(404px, 88vw) !important;
+    padding:20px 18px 18px !important;
+    border-radius:34px !important;
+    border:1px solid rgba(232,207,151,.24) !important;
+    box-shadow:
+      0 26px 62px rgba(0,0,0,.22),
+      inset 0 1px 0 rgba(255,255,255,.03) !important;
+  }
+
+  .oracle-sign-card::before{
+    inset:15px !important;
+    border-radius:23px !important;
+    border:1px solid rgba(232,207,151,.08) !important;
+  }
+
+  .oracle-sign-art{
+    width:min(176px, 54vw) !important;
+    height:min(176px, 54vw) !important;
+    margin:2px auto 14px !important;
+    box-shadow:0 0 46px rgba(124,92,255,.12), 0 0 14px rgba(232,207,151,.05) inset !important;
+  }
+
+  .oracle-sign-name{
+    max-width:14ch !important;
+    margin:0 auto 10px !important;
+    font:600 23px/1.04 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.015em !important;
+  }
+
+  .oracle-sign-omen{
+    max-width:11.5ch !important;
+    margin:0 auto 16px !important;
+    font:600 23px/1.34 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+  }
+
+  .oracle-sign-meta{
+    width:min(308px, 100%) !important;
+    gap:10px !important;
+  }
+
+  .oracle-sign-chip{
+    border-radius:17px !important;
+    padding:11px 10px 10px !important;
+    background:rgba(255,255,255,.03) !important;
+    border:1px solid rgba(232,207,151,.07) !important;
+  }
+
+  .oracle-sign-chip-label{
+    font-size:9px !important;
+    letter-spacing:.16em !important;
+    color:rgba(245,241,232,.34) !important;
+    margin-bottom:6px !important;
+  }
+
+  .oracle-sign-chip-value{
+    font:500 15px/1.2 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    color:#e8cf97 !important;
+  }
+
+  .result-actions{
+    width:min(404px, 88vw) !important;
+    margin:14px auto 0 !important;
+    gap:10px !important;
+  }
+
+  .wide-btn{
+    box-shadow:
+      0 18px 34px rgba(0,0,0,.14),
+      inset 0 1px 0 rgba(255,255,255,.03) !important;
+  }
+
+  @media (max-width:420px){
+    .card-stage{
+      padding:8px 10px 22px !important;
+    }
+    .stage-copy{
+      font-size:14px !important;
+      margin-bottom:12px !important;
+    }
+    .tarot-card{
+      width:224px !important;
+      height:350px !important;
+    }
+    .card-guidance{
+      max-width:15ch !important;
+      font-size:18px !important;
+      line-height:1.4 !important;
+    }
+    .card-action{
+      width:min(188px, 84%) !important;
+      font-size:12.5px !important;
+    }
+    .result-copy{
+      font-size:14px !important;
+      margin-bottom:12px !important;
+    }
+    .oracle-sign-name{
+      font-size:22px !important;
+    }
+    .oracle-sign-omen{
+      font-size:21px !important;
+      max-width:11ch !important;
+    }
+    .oracle-sign-chip-value{
+      font-size:14px !important;
+    }
+  }
+</style>
+
+
+
+
+
+
+<style id="prelude-stage-polish">
+  #preludePanel{
+    width:min(430px, 92vw);
+    margin:6px auto 0;
+    padding:18px 16px 8px;
+    text-align:center;
+  }
+
+  #preludePanel .ritual-copy{
+    max-width:22ch !important;
+    margin:0 auto 16px !important;
+    min-height:auto !important;
+    color:rgba(245,241,232,.94) !important;
+    font:italic 600 18px/1.42 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.008em !important;
+    text-wrap:balance !important;
+  }
+
+  #preludePanel .footer-actions{
+    width:min(360px, 100%);
+    margin:0 auto !important;
+    gap:10px !important;
+  }
+
+  #preludePanel .wide-btn{
+    min-height:46px;
+  }
+
+  #preludePanel .wide-btn.ghost{
+    background:rgba(255,255,255,.04) !important;
+    color:rgba(245,241,232,.82) !important;
+    border:1px solid rgba(232,207,151,.10) !important;
+    box-shadow:none !important;
+  }
+
+  #preludePanel .tiny{
+    max-width:20ch;
+    margin:10px auto 0 !important;
+    color:rgba(245,241,232,.46) !important;
+    font:500 11px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif !important;
+    letter-spacing:.03em !important;
+  }
+
+  .hero-home.prelude-mode .eye-wrap{
+    opacity:.58;
+    transform:scale(.985);
+    transition:opacity .45s ease, transform .45s ease;
+  }
+
+  .hero-home.prelude-mode .awakening-row,
+  .hero-home.prelude-mode .home-question,
+  .hero-home.prelude-mode #moodGrid,
+  .hero-home.prelude-mode #textAreaWrap,
+  .hero-home.prelude-mode .home-begin-wrap,
+  .hero-home.prelude-mode .daily-note{
+    opacity:0;
+    transform:translateY(8px);
+    pointer-events:none;
+    transition:opacity .35s ease, transform .35s ease;
+  }
+
+  @media (max-width:420px){
+    #preludePanel{
+      width:min(414px, 92vw);
+      padding:14px 12px 6px;
+    }
+
+    #preludePanel .ritual-copy{
+      max-width:20ch !important;
+      margin-bottom:14px !important;
+      font-size:17px !important;
+      line-height:1.4 !important;
+    }
+
+    #preludePanel .wide-btn{
+      min-height:44px;
+    }
+
+    #preludePanel .tiny{
+      font-size:10px !important;
+      margin-top:8px !important;
+    }
+  }
+</style>
+
+
+<style id="flip-page-mobile-visual-final">
+  .card-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .stage-copy{
+    max-width:22ch !important;
+    margin:0 auto 12px !important;
+  }
+
+  .card-3d-wrap{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+  }
+
+  .footer-actions{
+    width:min(360px, 90vw) !important;
+  }
+
+  @media (max-width: 420px){
+    .card-stage{
+      padding:6px 10px 18px !important;
+    }
+
+    .stage-copy{
+      max-width:20ch !important;
+      font-size:13.5px !important;
+      line-height:1.36 !important;
+      margin:0 auto 10px !important;
+      opacity:.92;
+    }
+
+    .card-3d-wrap{
+      min-height:322px !important;
+      margin-top:0 !important;
+      margin-bottom:6px !important;
+    }
+
+    .tarot-card{
+      width:214px !important;
+      height:336px !important;
+    }
+
+    .card-name{
+      margin-top:13px !important;
+      font-size:22px !important;
+      line-height:1.04 !important;
+    }
+
+    .card-tag{
+      margin-top:5px !important;
+      font-size:9px !important;
+      letter-spacing:.17em !important;
+    }
+
+    .card-guidance{
+      margin-top:12px !important;
+      max-width:14.5ch !important;
+      font-size:17px !important;
+      line-height:1.36 !important;
+    }
+
+    .card-action{
+      width:min(182px, 84%) !important;
+      margin-top:12px !important;
+      padding:10px 12px 10px !important;
+      border-radius:16px !important;
+      font-size:12px !important;
+      line-height:1.28 !important;
+    }
+
+    .card-action span{
+      font-size:8px !important;
+      letter-spacing:.13em !important;
+    }
+
+    .footer-actions{
+      width:min(320px, 88vw) !important;
+      margin:12px auto 0 !important;
+      gap:9px !important;
+    }
+
+    .footer-actions .wide-btn{
+      min-height:44px !important;
+      font-size:12px !important;
+      letter-spacing:.08em !important;
+    }
+  }
+
+  @media (max-width: 375px){
+    .stage-copy{
+      max-width:19ch !important;
+      font-size:13px !important;
+    }
+
+    .card-3d-wrap{
+      min-height:312px !important;
+    }
+
+    .tarot-card{
+      width:206px !important;
+      height:324px !important;
+    }
+
+    .card-guidance{
+      max-width:14ch !important;
+      font-size:16px !important;
+    }
+
+    .card-action{
+      width:min(176px, 84%) !important;
+      font-size:11.5px !important;
+    }
+
+    .footer-actions{
+      width:min(304px, 88vw) !important;
+    }
+  }
+</style>
+
+
+<style id="flip-card-fit-fix">
+  @media (max-width: 520px){
+    .card-stage{
+      padding:8px 10px 18px !important;
+    }
+
+    .card-3d-wrap{
+      min-height:420px !important;
+      margin-bottom:8px !important;
+    }
+
+    .tarot-card{
+      width:236px !important;
+      height:392px !important;
+    }
+
+    .card-face{
+      border-radius:26px !important;
+      overflow:hidden !important;
+    }
+
+    .card-front{
+      padding:12px 12px 14px !important;
+      display:flex !important;
+      flex-direction:column !important;
+      align-items:center !important;
+      justify-content:flex-start !important;
+    }
+
+    .card-art{
+      width:100% !important;
+      max-width:192px !important;
+      height:152px !important;
+      min-height:152px !important;
+      margin:2px auto 12px !important;
+      border-radius:18px !important;
+      flex:0 0 auto !important;
+    }
+
+    .card-name{
+      margin-top:0 !important;
+      font-size:20px !important;
+      line-height:1.02 !important;
+      max-width:10ch !important;
+      flex:0 0 auto !important;
+    }
+
+    .card-tag{
+      margin-top:5px !important;
+      font-size:9px !important;
+      letter-spacing:.16em !important;
+      flex:0 0 auto !important;
+    }
+
+    .card-guidance{
+      margin:12px auto 0 !important;
+      max-width:11.5ch !important;
+      font-size:16px !important;
+      line-height:1.32 !important;
+      flex:0 0 auto !important;
+      text-wrap:balance !important;
+    }
+
+    .card-action{
+      width:min(188px, 100%) !important;
+      margin:12px auto 0 !important;
+      padding:10px 12px !important;
+      font-size:12px !important;
+      line-height:1.24 !important;
+      border-radius:16px !important;
+      flex:0 0 auto !important;
+    }
+
+    .card-action span{
+      font-size:8px !important;
+    }
+
+    .footer-actions{
+      margin-top:14px !important;
+    }
+
+    .footer-actions .wide-btn{
+      min-height:44px !important;
+    }
+  }
+</style>
+
+
+<style id="flip-name-only">
+  /* Flip page card: keep only the card name under the art */
+  #cardStage .card-tag,
+  #cardStage .card-guidance,
+  #cardStage .card-action{
+    display:none !important;
+  }
+
+  #cardStage .card-front{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  #cardStage .card-name{
+    margin-top:10px !important;
+    margin-bottom:0 !important;
+    max-width:11ch !important;
+    text-align:center !important;
+  }
+
+  @media (max-width: 520px){
+    #cardStage .tarot-card{
+      height:338px !important;
+    }
+
+    #cardStage .card-3d-wrap{
+      min-height:366px !important;
+    }
+
+    #cardStage .card-art{
+      height:170px !important;
+      min-height:170px !important;
+      margin:4px auto 14px !important;
+    }
+
+    #cardStage .card-name{
+      font-size:22px !important;
+      line-height:1.04 !important;
+      margin-top:6px !important;
+      max-width:10.5ch !important;
+    }
+  }
+</style>
+
+
+<style id="unified-page-system">
+  :root{
+    --page-max: 430px;
+    --page-pad-x: 14px;
+    --section-gap: 14px;
+    --panel-top: 12px;
+    --action-width: min(var(--page-max), calc(100vw - 28px));
+    --card-width: 236px;
+    --result-card-width: min(392px, 86vw);
+  }
+
+  #app{
+    width:100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .shell{
+    width:min(calc(var(--page-max) + 32px), 100vw);
+    margin:0 auto;
+    padding-left: var(--page-pad-x) !important;
+    padding-right: var(--page-pad-x) !important;
+    box-sizing:border-box;
+  }
+
+  .hero.hero-home,
+  #preludePanel,
+  .card-stage,
+  .result-stage{
+    width:100% !important;
+    max-width:var(--page-max) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    box-sizing:border-box !important;
+  }
+
+  .hero.hero-home{
+    padding-top: var(--panel-top) !important;
+  }
+
+  .eye-wrap{
+    width:min(404px, calc(100vw - 28px)) !important;
+    max-width:404px !important;
+    margin:0 auto 22px !important;
+  }
+
+  #eyeSvg{
+    width:min(404px, calc(100vw - 28px)) !important;
+    max-width:404px !important;
+    margin:0 auto !important;
+  }
+
+  .home-question{
+    max-width:17.4ch !important;
+    margin:0 auto 16px !important;
+  }
+
+  .chips{
+    width:100% !important;
+    max-width:var(--page-max) !important;
+    margin:0 auto !important;
+    gap:12px !important;
+  }
+
+  .chip{
+    min-height:68px !important;
+  }
+
+  #textAreaWrap{
+    width:100% !important;
+    max-width:var(--page-max) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    box-sizing:border-box !important;
+  }
+
+  .mind-input-row,
+  .mind-input{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .footer-actions,
+  .home-begin-wrap,
+  .result-actions{
+    width:var(--action-width) !important;
+    max-width:var(--page-max) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    box-sizing:border-box !important;
+  }
+
+  .wide-btn,
+  .ghost-btn{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  #preludePanel{
+    padding:16px 0 8px !important;
+  }
+
+  #preludePanel .footer-actions{
+    width:100% !important;
+    max-width:360px !important;
+  }
+
+  .card-stage{
+    padding:8px 0 20px !important;
+  }
+
+  .card-3d-wrap{
+    width:100% !important;
+    max-width:var(--page-max) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  .tarot-card{
+    width:var(--card-width) !important;
+    max-width:var(--card-width) !important;
+    margin:0 auto !important;
+  }
+
+  .result-stage{
+    padding:8px 0 24px !important;
+  }
+
+  .oracle-sign-card{
+    width:var(--result-card-width) !important;
+    max-width:var(--result-card-width) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    box-sizing:border-box !important;
+  }
+
+  .result-actions{
+    width:var(--result-card-width) !important;
+    max-width:var(--result-card-width) !important;
+  }
+
+  .absorb-notice{
+    padding-left: var(--page-pad-x) !important;
+    padding-right: var(--page-pad-x) !important;
+    box-sizing:border-box !important;
+  }
+
+  @media (max-width: 420px){
+    :root{
+      --page-max: 390px;
+      --page-pad-x: 12px;
+      --section-gap: 12px;
+      --panel-top: 10px;
+      --card-width: 228px;
+      --result-card-width: min(382px, 88vw);
+    }
+
+    .eye-wrap{
+      width:min(390px, calc(100vw - 24px)) !important;
+      max-width:390px !important;
+      margin-bottom:20px !important;
+    }
+
+    #eyeSvg{
+      width:min(390px, calc(100vw - 24px)) !important;
+      max-width:390px !important;
+    }
+
+    .home-question{
+      margin-bottom:14px !important;
+      max-width:16.8ch !important;
+    }
+
+    .chips{
+      gap:11px !important;
+    }
+
+    .chip{
+      min-height:64px !important;
+    }
+
+    .card-stage{
+      padding-bottom:18px !important;
+    }
+
+    .result-stage{
+      padding-bottom:22px !important;
+    }
+  }
+</style>
+
+
+<style id="language-system-cleanup">
+  .daily-note{
+    display:none !important;
+  }
+</style>
+
+
+
+
+
+
+<style id="cta-width-center-final">
+  .home-begin-wrap,
+  #cardStage .footer-actions{
+    width:100% !important;
+    max-width:430px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    display:flex !important;
+    justify-content:center !important;
+  }
+
+  #beginBtn,
+  #finishBtn{
+    width:min(360px, 82vw) !important;
+    max-width:360px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    align-self:center !important;
+    letter-spacing:.11em !important;
+    padding-left:18px !important;
+    padding-right:18px !important;
+  }
+
+  @media (max-width: 420px){
+    #beginBtn,
+    #finishBtn{
+      width:min(336px, 84vw) !important;
+      max-width:336px !important;
+      letter-spacing:.10em !important;
+      font-size:14px !important;
+      padding-left:16px !important;
+      padding-right:16px !important;
+    }
+  }
+</style>
+
+
+<style id="prelude-simplified-final">
+  #preludePanel{
+    padding:24px 14px 14px !important;
+  }
+
+  #preludePanel .ritual-copy{
+    max-width:22ch !important;
+    margin:0 auto 10px !important;
+  }
+
+  #preludePanel .prelude-tiny{
+    max-width:20ch;
+    margin:0 auto !important;
+    text-align:center;
+    color:rgba(245,241,232,.46) !important;
+    font:500 11px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif !important;
+    letter-spacing:.03em !important;
+  }
+
+  @media (max-width:420px){
+    #preludePanel{
+      padding:22px 12px 12px !important;
+    }
+    #preludePanel .ritual-copy{
+      max-width:20ch !important;
+      margin-bottom:8px !important;
+    }
+    #preludePanel .prelude-tiny{
+      font-size:10px !important;
+    }
+  }
+</style>
+
+
+<style id="homepage-linkage-slim-fix">
+  #homePanel,
+  #moodGrid,
+  #textAreaWrap,
+  .home-begin-wrap{
+    position:relative !important;
+    z-index:32 !important;
+  }
+
+  #moodGrid .chip,
+  #mindText,
+  #beginBtn{
+    pointer-events:auto !important;
+  }
+
+  #beginBtn[disabled]{
+    opacity:.58 !important;
+    filter:saturate(.88) !important;
+  }
+</style>
+
+
+<style id="three-layer-copy-system">
+  .stage-copy{
+    max-width:20ch !important;
+    text-wrap:balance !important;
+  }
+
+  .result-copy{
+    max-width:24ch !important;
+    text-wrap:balance !important;
+  }
+
+  @media (max-width:420px){
+    .stage-copy{
+      max-width:18ch !important;
+      font-size:14px !important;
+      line-height:1.34 !important;
+    }
+    .result-copy{
+      max-width:22ch !important;
+    }
+  }
+</style>
+
+
+<style id="rotation-copy-line-reveal">
+  .stage-copy.stage-copy-lines{
+    max-width:19.5ch !important;
+    min-height:56px !important;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+
+  .stage-copy.stage-copy-lines .line{
+    display:block;
+    opacity:0;
+    transform:translateY(8px);
+    animation:stageLineReveal .6s cubic-bezier(.2,.8,.2,1) forwards;
+    text-wrap:balance;
+  }
+
+  .stage-copy.stage-copy-lines .line.line-2{
+    animation-delay:.38s;
+  }
+
+  @keyframes stageLineReveal{
+    from{opacity:0; transform:translateY(8px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  @media (max-width:420px){
+    .stage-copy.stage-copy-lines{
+      max-width:18ch !important;
+      min-height:52px !important;
+      gap:3px;
+    }
+  }
+</style>
+
+
+
+
+
+
+<style id="copy-reduction-final">
+  .status-row,
+  .daily-note,
+  .result-note{
+    display:none !important;
+  }
+
+  .result-copy{
+    max-width:20.5ch !important;
+    margin:0 auto 12px !important;
+  }
+
+  #preludePanel .ritual-copy{
+    max-width:21ch !important;
+  }
+
+  .result-actions .wide-btn,
+  .result-actions .ghost-btn{
+    letter-spacing:.08em !important;
+  }
+</style>
+
+
+<style id="desktop-stage-visibility-fix">
+  #cardStage{
+    display:none !important;
+  }
+  #cardStage.active{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+  }
+
+  #resultStage{
+    display:none !important;
+  }
+  #resultStage.active{
+    display:block !important;
+  }
+
+  @media (max-width: 520px){
+    #cardStage.active{
+      display:flex !important;
+    }
+  }
+</style>
+
+
+<style id="homepage-single-column-final">
+  .hero.hero-home{
+    width:min(430px, 100%) !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+    padding:8px 12px 16px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+  }
+
+  .hero.hero-home > *{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .eye-wrap{
+    width:min(404px, 100%) !important;
+    max-width:404px !important;
+    height:226px !important;
+    margin:0 auto 18px !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    align-self:center !important;
+    left:auto !important;
+    right:auto !important;
+  }
+
+  #eyeSvg{
+    width:min(404px, 100%) !important;
+    max-width:404px !important;
+    display:block !important;
+    margin:0 auto !important;
+    transform:none !important;
+  }
+
+  #homePanel.panel{
+    width:100% !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+    padding:0 !important;
+  }
+
+  .home-question{
+    max-width:16.8ch !important;
+    margin:0 auto 16px !important;
+    text-align:center !important;
+  }
+
+  .chips{
+    width:100% !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+  }
+
+  #textAreaWrap,
+  .home-begin-wrap{
+    width:100% !important;
+    max-width:430px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  @media (max-width:420px){
+    .hero.hero-home{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+      padding:6px 10px 14px !important;
+    }
+
+    .eye-wrap{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+      height:214px !important;
+      margin-bottom:16px !important;
+    }
+
+    #eyeSvg{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+    }
+
+    .home-question{
+      max-width:15.8ch !important;
+      margin-bottom:14px !important;
+    }
+  }
+</style>
+
+
+<style id="hero-hide-strong-fallback">
+  .hero-home.stage-hidden{
+    display:none !important;
+    visibility:hidden !important;
+    max-height:0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+</style>
+
+
+
+
+<style id="immersive-flow-polish">
+  .absorb-notice span{
+    max-width:min(30ch, 82vw) !important;
+    padding:12px 22px 13px !important;
+    font-size:15px !important;
+    line-height:1.28 !important;
+    animation:absorbMessageLift .7s ease forwards, absorbGlowBreath 2.2s ease-in-out infinite .2s;
+  }
+
+  @keyframes absorbGlowBreath{
+    0%,100%{
+      box-shadow:0 16px 38px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.03);
+      transform:translateY(0);
+    }
+    50%{
+      box-shadow:0 18px 44px rgba(0,0,0,.16), 0 0 18px rgba(232,207,151,.08), inset 0 1px 0 rgba(255,255,255,.03);
+      transform:translateY(-1px);
+    }
+  }
+
+  #preludePanel .ritual-copy.ritual-lines{
+    max-width:22ch !important;
+    min-height:58px !important;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+
+  #preludePanel .ritual-copy.ritual-lines .line{
+    display:block;
+    opacity:0;
+    transform:translateY(8px);
+    animation:ritualLineReveal .72s cubic-bezier(.2,.8,.2,1) forwards;
+    text-wrap:balance;
+  }
+
+  #preludePanel .ritual-copy.ritual-lines .line.line-2{
+    animation-delay:.46s;
+  }
+
+  @keyframes ritualLineReveal{
+    from{opacity:0; transform:translateY(8px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  #preludePanel .tiny{
+    opacity:.74 !important;
+    letter-spacing:.025em !important;
+  }
+
+  .tarot-card.waiting .card-back{
+    animation:cardBackPulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes cardBackPulse{
+    0%,100%{
+      box-shadow:0 28px 60px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.08);
+      filter:brightness(1);
+    }
+    50%{
+      box-shadow:0 30px 64px rgba(0,0,0,.44), 0 0 18px rgba(124,92,255,.10), 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.08);
+      filter:brightness(1.04);
+    }
+  }
+
+  .stage-copy.stage-copy-lines{
+    min-height:60px !important;
+    gap:5px !important;
+  }
+
+  .stage-copy.stage-copy-lines .line{
+    animation-duration:.7s !important;
+  }
+
+  .stage-copy.stage-copy-lines .line.line-2{
+    animation-delay:.44s !important;
+  }
+
+  @media (max-width:420px){
+    #preludePanel .ritual-copy.ritual-lines{
+      max-width:20ch !important;
+      min-height:54px !important;
+    }
+    .stage-copy.stage-copy-lines{
+      min-height:56px !important;
+    }
+    .absorb-notice span{
+      max-width:min(27ch, 86vw) !important;
+      font-size:14px !important;
+      line-height:1.3 !important;
+    }
+  }
+</style>
+
+
+
+
+
+
+<style id="home-result-consolidated-final">
+  /* Homepage final consolidated */
+  .hero.hero-home{
+    width:min(430px, 100%) !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+    padding:8px 12px 16px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:0 !important;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  .hero.hero-home > *{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .eye-wrap{
+    width:min(404px, 100%) !important;
+    max-width:404px !important;
+    height:226px !important;
+    margin:0 auto 18px !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    align-self:center !important;
+    left:auto !important;
+    right:auto !important;
+    position:relative;
+    isolation:isolate;
+  }
+
+  .eye-wrap::before{
+    content:"";
+    position:absolute;
+    inset:9% 11% 15%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 48%,
+        rgba(136,112,255,.20),
+        rgba(126,247,255,.10) 28%,
+        rgba(232,207,151,.13) 54%,
+        rgba(232,207,151,0) 76%);
+    filter:blur(26px);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  #eyeSvg{
+    width:min(404px, 100%) !important;
+    max-width:404px !important;
+    display:block !important;
+    margin:0 auto !important;
+    transform:none !important;
+    position:relative;
+    z-index:1;
+    filter:
+      drop-shadow(0 20px 42px rgba(124,92,255,.19))
+      drop-shadow(0 0 46px rgba(119,230,255,.12))
+      drop-shadow(0 6px 16px rgba(232,207,151,.08)) !important;
+  }
+
+  #homePanel.panel{
+    width:100% !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    position:relative !important;
+    z-index:32 !important;
+  }
+
+  .home-question{
+    max-width:16.8ch !important;
+    margin:0 auto 16px !important;
+    text-align:center !important;
+    line-height:1.05 !important;
+    letter-spacing:.004em !important;
+    text-wrap:balance;
+  }
+
+  .chips{
+    width:100% !important;
+    max-width:430px !important;
+    margin:0 auto !important;
+    gap:12px !important;
+    position:relative;
+    z-index:32 !important;
+  }
+
+  .chip{
+    min-height:68px !important;
+    border-radius:21px !important;
+    transition:
+      transform .22s ease,
+      border-color .22s ease,
+      box-shadow .22s ease,
+      background .22s ease !important;
+  }
+
+  .chip:hover{
+    transform:translateY(-1px);
+    border-color:rgba(232,207,151,.34) !important;
+    box-shadow:0 10px 24px rgba(0,0,0,.10), 0 0 0 1px rgba(232,207,151,.08) !important;
+  }
+
+  .chip.selected{
+    border-color:rgba(232,207,151,.96) !important;
+    background:linear-gradient(180deg, rgba(213,179,106,.24), rgba(255,255,255,.08)) !important;
+    box-shadow:
+      0 0 0 1px rgba(232,207,151,.72),
+      0 0 0 5px rgba(232,207,151,.10),
+      0 18px 40px rgba(213,179,106,.14),
+      inset 0 1px 0 rgba(255,255,255,.05) !important;
+  }
+
+  #textAreaWrap,
+  .home-begin-wrap{
+    width:100% !important;
+    max-width:430px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    position:relative !important;
+    z-index:32 !important;
+  }
+
+  #moodGrid .chip,
+  #mindText,
+  #beginBtn{
+    pointer-events:auto !important;
+  }
+
+  /* Result final consolidated */
+  .result-copy{
+    display:none !important;
+  }
+
+  .result-stage{
+    width:min(430px, 100%) !important;
+    margin:0 auto !important;
+    padding:8px 12px 30px !important;
+    position:relative !important;
+  }
+
+  .result-stage::before{
+    content:"";
+    position:absolute;
+    inset:8px 18px auto;
+    height:180px;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 34%,
+        rgba(137,112,255,.16),
+        rgba(126,247,255,.08) 28%,
+        rgba(232,207,151,.06) 54%,
+        rgba(232,207,151,0) 76%);
+    filter:blur(30px);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .result-stage.active .oracle-sign-card{
+    animation:resultCardFloatIn .9s cubic-bezier(.18,.82,.24,1) both;
+  }
+
+  .result-stage.active .result-actions{
+    animation:resultActionsFade .95s ease both .18s;
+  }
+
+  @keyframes resultCardFloatIn{
+    from{opacity:0; transform:translateY(16px) scale(.985)}
+    to{opacity:1; transform:translateY(0) scale(1)}
+  }
+
+  @keyframes resultActionsFade{
+    from{opacity:0; transform:translateY(10px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  .oracle-sign-card{
+    width:min(388px, 86vw) !important;
+    margin:0 auto !important;
+    padding:18px 17px 17px !important;
+    border-radius:34px !important;
+    background:
+      radial-gradient(circle at 50% 10%, rgba(255,248,229,.11), transparent 22%),
+      linear-gradient(180deg, rgba(16,12,27,.985), rgba(22,16,38,.992) 54%, rgba(10,8,18,.995));
+    border:1px solid rgba(232,207,151,.18) !important;
+    box-shadow:
+      0 28px 64px rgba(0,0,0,.24),
+      0 0 28px rgba(124,92,255,.05),
+      inset 0 1px 0 rgba(255,255,255,.03) !important;
+    overflow:hidden !important;
+    position:relative;
+    z-index:1;
+  }
+
+  .oracle-sign-card::before{
+    content:"";
+    position:absolute;
+    inset:15px !important;
+    border-radius:24px !important;
+    border:1px solid rgba(232,207,151,.075) !important;
+    pointer-events:none;
+  }
+
+  .oracle-sign-card::after{
+    content:"";
+    position:absolute;
+    inset:auto 28px 20px 28px;
+    height:1px;
+    background:linear-gradient(90deg, rgba(232,207,151,0), rgba(232,207,151,.14), rgba(232,207,151,0));
+    pointer-events:none;
+    opacity:.55;
+  }
+
+  .oracle-sign-art{
+    width:min(166px, 50vw) !important;
+    height:min(166px, 50vw) !important;
+    margin:4px auto 13px !important;
+    position:relative;
+    border-radius:50% !important;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(255,251,242,.14), rgba(255,251,242,.04) 36%, rgba(255,251,242,0) 68%),
+      radial-gradient(circle at 50% 50%, rgba(124,92,255,.16), rgba(124,92,255,0) 64%) !important;
+    box-shadow:
+      0 0 50px rgba(124,92,255,.13),
+      0 0 16px rgba(232,207,151,.05) inset !important;
+  }
+
+  .oracle-sign-art::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border-radius:50%;
+    border:1px solid rgba(232,207,151,.09) !important;
+    pointer-events:none;
+  }
+
+  .oracle-sign-name{
+    color:rgba(236,215,170,.82) !important;
+    font-size:20px !important;
+    margin:0 auto 8px !important;
+    max-width:14ch !important;
+    text-align:center !important;
+  }
+
+  .oracle-sign-omen{
+    max-width:12.4ch !important;
+    font-size:20px !important;
+    line-height:1.34 !important;
+    margin:0 auto 16px !important;
+    color:rgba(246,234,208,.95) !important;
+    text-align:center !important;
+    text-wrap:balance !important;
+  }
+
+  .oracle-sign-meta{
+    width:min(292px, 100%) !important;
+    margin:0 auto !important;
+    gap:10px !important;
+  }
+
+  .oracle-sign-chip{
+    padding:10px 10px 9px !important;
+    border-radius:17px !important;
+    background:linear-gradient(180deg, rgba(255,255,255,.032), rgba(255,255,255,.022)) !important;
+    border:1px solid rgba(232,207,151,.065) !important;
+  }
+
+  .oracle-sign-chip-label{
+    color:rgba(245,241,232,.27) !important;
+    font-size:8.5px !important;
+    letter-spacing:.18em !important;
+  }
+
+  .oracle-sign-chip-value{
+    font-size:14px !important;
+    color:#e8cf97 !important;
+  }
+
+  .result-actions{
+    width:min(388px, 86vw) !important;
+    gap:9px !important;
+    margin:13px auto 0 !important;
+    position:relative;
+    z-index:1;
+  }
+
+  .result-actions .wide-btn{
+    min-height:45px !important;
+    letter-spacing:.085em !important;
+    box-shadow:
+      0 16px 28px rgba(0,0,0,.14),
+      0 0 14px rgba(201,157,81,.05),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+  }
+
+  .result-actions .ghost-btn{
+    min-height:43px !important;
+    color:rgba(245,241,232,.76) !important;
+    background:rgba(255,255,255,.042) !important;
+    border:1px solid rgba(232,207,151,.075) !important;
+  }
+
+  @media (max-width:420px){
+    .hero.hero-home{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+      padding:6px 10px 14px !important;
+    }
+
+    .eye-wrap{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+      height:214px !important;
+      margin-bottom:16px !important;
+    }
+
+    #eyeSvg{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+    }
+
+    .home-question{
+      max-width:15.8ch !important;
+      margin-bottom:14px !important;
+    }
+
+    .oracle-sign-card{
+      width:min(380px, 88vw) !important;
+    }
+
+    .oracle-sign-art{
+      width:min(160px, 52vw) !important;
+      height:min(160px, 52vw) !important;
+      margin:2px auto 12px !important;
+    }
+
+    .oracle-sign-name{
+      font-size:19px !important;
+    }
+
+    .oracle-sign-omen{
+      max-width:12ch !important;
+      font-size:19px !important;
+      margin-bottom:15px !important;
+    }
+
+    .result-actions{
+      width:min(380px, 88vw) !important;
+    }
+  }
+</style>
+
+
+<style id="homepage-firstscreen-refinal">
+  /* Homepage first-screen final refinement */
+  .hero.hero-home{
+    width:min(418px, 100%) !important;
+    max-width:418px !important;
+    padding:10px 12px 18px !important;
+  }
+
+  .eye-wrap{
+    width:min(394px, 100%) !important;
+    max-width:394px !important;
+    height:218px !important;
+    margin:4px auto 18px !important;
+  }
+
+  .eye-wrap::before{
+    inset:11% 12% 17% !important;
+    background:
+      radial-gradient(circle at 50% 48%,
+        rgba(136,112,255,.18),
+        rgba(126,247,255,.09) 28%,
+        rgba(232,207,151,.10) 54%,
+        rgba(232,207,151,0) 76%) !important;
+    filter:blur(23px) !important;
+  }
+
+  #eyeSvg{
+    width:min(394px, 100%) !important;
+    max-width:394px !important;
+    filter:
+      drop-shadow(0 18px 34px rgba(124,92,255,.17))
+      drop-shadow(0 0 38px rgba(119,230,255,.10))
+      drop-shadow(0 6px 14px rgba(232,207,151,.07)) !important;
+  }
+
+  .home-question{
+    max-width:15.9ch !important;
+    margin:0 auto 15px !important;
+    font-size:clamp(24px, 5.7vw, 30px) !important;
+    line-height:1.03 !important;
+    letter-spacing:.002em !important;
+    text-wrap:balance !important;
+  }
+
+  .chips{
+    gap:12px !important;
+  }
+
+  .chip{
+    min-height:72px !important;
+    padding:13px 12px 12px !important;
+    border-radius:20px !important;
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.052)) !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.03) !important;
+  }
+
+  .chip > :not(span){
+    font-size:15px !important;
+    line-height:1.05 !important;
+  }
+
+  .chip span{
+    margin-top:4px !important;
+    font-size:10.5px !important;
+    line-height:1.18 !important;
+    opacity:.32 !important;
+    letter-spacing:.005em !important;
+  }
+
+  .chip.selected{
+    border-color:rgba(232,207,151,.94) !important;
+    background:linear-gradient(180deg, rgba(213,179,106,.22), rgba(255,255,255,.08)) !important;
+    box-shadow:
+      0 0 0 1px rgba(232,207,151,.64),
+      0 0 0 4px rgba(232,207,151,.09),
+      0 16px 34px rgba(213,179,106,.12),
+      inset 0 1px 0 rgba(255,255,255,.05) !important;
+  }
+
+  #textAreaWrap{
+    margin-top:8px !important;
+  }
+
+  #textAreaWrap.contextual-input.show{
+    max-height:102px !important;
+  }
+
+  #textAreaWrap .mind-input{
+    height:47px !important;
+    padding:0 16px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.05) !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    color:#f5f1e8 !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025) !important;
+  }
+
+  #textAreaWrap .mind-input::placeholder{
+    color:rgba(245,241,232,.52) !important;
+  }
+
+  #textAreaWrap .contextual-input-note{
+    margin-top:4px !important;
+    color:rgba(245,241,232,.30) !important;
+    letter-spacing:.03em !important;
+  }
+
+  .home-begin-wrap{
+    margin-top:14px !important;
+  }
+
+  #beginBtn{
+    width:min(332px, 84vw) !important;
+    max-width:332px !important;
+    min-height:45px !important;
+    letter-spacing:.10em !important;
+    box-shadow:
+      0 16px 30px rgba(0,0,0,.14),
+      0 0 14px rgba(201,157,81,.05),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+  }
+
+  @media (max-width:420px){
+    .hero.hero-home{
+      width:min(390px, 100%) !important;
+      max-width:390px !important;
+      padding:8px 10px 16px !important;
+    }
+
+    .eye-wrap{
+      width:min(384px, 100%) !important;
+      max-width:384px !important;
+      height:210px !important;
+      margin-bottom:16px !important;
+    }
+
+    #eyeSvg{
+      width:min(384px, 100%) !important;
+      max-width:384px !important;
+    }
+
+    .home-question{
+      max-width:15.3ch !important;
+      margin-bottom:14px !important;
+      font-size:24px !important;
+    }
+
+    .chips{
+      gap:11px !important;
+    }
+
+    .chip{
+      min-height:68px !important;
+      padding:12px 10px 11px !important;
+      border-radius:19px !important;
+    }
+
+    .chip span{
+      font-size:10px !important;
+      margin-top:3px !important;
+    }
+
+    #beginBtn{
+      width:min(322px, 86vw) !important;
+      max-width:322px !important;
+      min-height:44px !important;
+      letter-spacing:.09em !important;
+    }
+  }
+</style>
+
+
+<style id="result-meta-remove-hard-final">
+  .oracle-sign-meta{
+    display:none !important;
+  }
+
+  .oracle-sign-omen{
+    margin-bottom:0 !important;
+  }
+
+  .result-actions{
+    margin-top:16px !important;
+  }
+
+  @media (max-width:420px){
+    .result-actions{
+      margin-top:14px !important;
+    }
+  }
+</style>
+
+
+<style id="result-page-post-meta-final-polish">
+  .result-stage{
+    padding-top:10px !important;
+  }
+
+  .oracle-sign-card{
+    width:min(384px, 86vw) !important;
+    min-height:548px !important;
+    padding:18px 17px 20px !important;
+  }
+
+  .oracle-sign-art{
+    margin:8px auto 14px !important;
+  }
+
+  .oracle-sign-name{
+    margin:0 auto 10px !important;
+    font-size:19px !important;
+    color:rgba(236,215,170,.76) !important;
+  }
+
+  .oracle-sign-omen{
+    max-width:12.6ch !important;
+    min-height:228px !important;
+    margin:0 auto 0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    font-size:21px !important;
+    line-height:1.34 !important;
+    text-wrap:balance !important;
+  }
+
+  .result-actions{
+    width:min(384px, 86vw) !important;
+    margin:18px auto 0 !important;
+    gap:10px !important;
+  }
+
+  .result-actions .wide-btn{
+    min-height:46px !important;
+    font-size:13px !important;
+    letter-spacing:.085em !important;
+    box-shadow:
+      0 16px 28px rgba(0,0,0,.14),
+      0 0 12px rgba(201,157,81,.05),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+  }
+
+  .result-actions .ghost-btn{
+    min-height:44px !important;
+    font-size:12.5px !important;
+    letter-spacing:.04em !important;
+    background:rgba(255,255,255,.04) !important;
+  }
+
+  @media (max-width:420px){
+    .result-stage{
+      padding-top:8px !important;
+    }
+
+    .oracle-sign-card{
+      width:min(376px, 88vw) !important;
+      min-height:528px !important;
+      padding:17px 16px 18px !important;
+    }
+
+    .oracle-sign-art{
+      margin:6px auto 12px !important;
+    }
+
+    .oracle-sign-name{
+      font-size:18px !important;
+      margin-bottom:8px !important;
+    }
+
+    .oracle-sign-omen{
+      max-width:12ch !important;
+      min-height:208px !important;
+      font-size:20px !important;
+      line-height:1.32 !important;
+    }
+
+    .result-actions{
+      width:min(376px, 88vw) !important;
+      margin-top:16px !important;
+      gap:9px !important;
+    }
+
+    .result-actions .wide-btn{
+      min-height:44px !important;
+      font-size:12.5px !important;
+    }
+
+    .result-actions .ghost-btn{
+      min-height:42px !important;
+      font-size:12px !important;
+    }
+  }
+</style>
+
+
+<style id="flip-to-result-bridge-polish">
+  .card-stage.closing .stage-copy{
+    opacity:0;
+    transform:translateY(-6px);
+    transition:opacity .32s ease, transform .32s ease;
+  }
+
+  .card-stage.closing .card-3d-wrap{
+    transform:translateY(-4px);
+    opacity:.96;
+    transition:transform .42s ease, opacity .42s ease;
+  }
+
+  .card-stage.closing .tarot-card{
+    filter:drop-shadow(0 0 18px rgba(232,207,151,.10));
+  }
+
+  .card-stage.closing .card-front{
+    box-shadow:
+      0 30px 64px rgba(0,0,0,.42),
+      0 0 28px rgba(124,92,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+
+  .card-stage.closing .footer-actions{
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .28s ease, transform .28s ease;
+  }
+
+  .result-stage{
+    opacity:0;
+    transform:translateY(12px) scale(.992);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+
+  .result-stage.active{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+</style>
+
+
+<style id="result-arrival-settle-polish">
+  /* Result page settles in with a staged, jewelry-like arrival */
+  .result-stage.active .oracle-sign-card{
+    animation:resultCardSettle .72s cubic-bezier(.18,.82,.24,1) both;
+  }
+
+  .result-stage.active .oracle-sign-art{
+    opacity:0;
+    transform:translateY(10px) scale(.985);
+    animation:resultPartRise .62s ease forwards .08s;
+  }
+
+  .result-stage.active .oracle-sign-name{
+    opacity:0;
+    transform:translateY(10px);
+    animation:resultPartRise .54s ease forwards .20s;
+  }
+
+  .result-stage.active .oracle-sign-omen{
+    opacity:0;
+    transform:translateY(12px);
+    animation:resultPartRise .62s ease forwards .32s;
+  }
+
+  .result-stage.active .result-actions{
+    opacity:0;
+    transform:translateY(10px);
+    animation:resultPartRise .52s ease forwards .46s;
+  }
+
+  @keyframes resultCardSettle{
+    from{
+      opacity:0;
+      transform:translateY(14px) scale(.988);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+  }
+
+  @keyframes resultPartRise{
+    from{
+      opacity:0;
+      transform:translateY(10px) scale(.995);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+  }
+</style>
+
+
+<style id="home-to-prelude-entrance-polish">
+  .hero-home{
+    transition:padding .38s ease, opacity .38s ease;
+  }
+
+  .hero-home.home-transitioning .eye-wrap{
+    opacity:.92;
+    transform:scale(1.012);
+    transition:opacity .42s ease, transform .52s ease;
+  }
+
+  .hero-home.home-transitioning .home-question,
+  .hero-home.home-transitioning #moodGrid,
+  .hero-home.home-transitioning #textAreaWrap,
+  .hero-home.home-transitioning .home-begin-wrap{
+    opacity:0;
+    transform:translateY(10px);
+    pointer-events:none;
+    transition:opacity .34s ease, transform .38s ease;
+  }
+
+  .hero-home.home-transitioning .absorb-notice{
+    opacity:1;
+    transition:opacity .34s ease;
+  }
+
+  .hero-home.home-transitioning .absorb-notice span{
+    animation:absorbMessageLift .72s ease forwards, absorbGlowBreath 2.2s ease-in-out infinite .24s;
+  }
+</style>
+
+
+<style id="home-wait-copy-overlap-fix">
+  /* Prevent the absorb message from colliding with the home question */
+  .hero-home.home-transitioning .home-question{
+    opacity:0 !important;
+    transform:translateY(14px) !important;
+    transition:opacity .18s ease, transform .22s ease !important;
+  }
+
+  .hero-home.home-transitioning #moodGrid,
+  .hero-home.home-transitioning #textAreaWrap,
+  .hero-home.home-transitioning .home-begin-wrap{
+    opacity:0 !important;
+    transform:translateY(10px) !important;
+    transition:opacity .24s ease, transform .28s ease !important;
+  }
+
+  .hero-home .absorb-notice{
+    z-index:40 !important;
+    align-items:center !important;
+    justify-items:center !important;
+    padding:0 20px !important;
+  }
+
+  .hero-home.home-transitioning .absorb-notice{
+    inset:0 !important;
+    min-height:100% !important;
+    display:grid !important;
+    place-items:center !important;
+  }
+
+  .hero-home.home-transitioning .absorb-notice span{
+    max-width:min(28ch, 82vw) !important;
+  }
+
+  @media (max-width:420px){
+    .hero-home.home-transitioning .absorb-notice{
+      inset:0 !important;
+      min-height:100% !important;
+      padding:0 16px !important;
+      display:grid !important;
+      place-items:center !important;
+    }
+
+    .hero-home.home-transitioning .absorb-notice span{
+      max-width:min(25ch, 86vw) !important;
+    }
+  }
+</style>
+
+
+<style id="homepage-mood-buttons-final-typography">
+  .chips{
+    gap:12px !important;
+  }
+
+  .chip{
+    min-height:74px !important;
+    padding:13px 12px 12px !important;
+    border-radius:21px !important;
+    background:linear-gradient(180deg, rgba(255,255,255,.098), rgba(255,255,255,.05)) !important;
+    border:1px solid rgba(255,255,255,.085) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.03),
+      0 6px 18px rgba(0,0,0,.04) !important;
+    transition:
+      transform .22s ease,
+      border-color .22s ease,
+      box-shadow .22s ease,
+      background .22s ease !important;
+  }
+
+  .chip > :not(span),
+  .chip .chip-text{
+    color:rgba(245,241,232,.965) !important;
+    font-size:15px !important;
+    font-weight:700 !important;
+    line-height:1.04 !important;
+    letter-spacing:.004em !important;
+  }
+
+  .chip span,
+  .chip .chip-note{
+    display:block !important;
+    margin-top:4px !important;
+    color:rgba(245,241,232,.34) !important;
+    font-size:10.5px !important;
+    font-weight:500 !important;
+    line-height:1.18 !important;
+    letter-spacing:.004em !important;
+  }
+
+  .chip:hover{
+    transform:translateY(-1px) !important;
+    border-color:rgba(232,207,151,.24) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.03),
+      0 10px 24px rgba(0,0,0,.08),
+      0 0 0 1px rgba(232,207,151,.05) !important;
+  }
+
+  .chip.selected{
+    border-color:rgba(232,207,151,.94) !important;
+    background:linear-gradient(180deg, rgba(213,179,106,.22), rgba(255,255,255,.075)) !important;
+    box-shadow:
+      0 0 0 1px rgba(232,207,151,.64),
+      0 0 0 4px rgba(232,207,151,.08),
+      0 16px 34px rgba(213,179,106,.12),
+      inset 0 1px 0 rgba(255,255,255,.05) !important;
+  }
+
+  .chip.selected > :not(span),
+  .chip.selected .chip-text{
+    color:rgba(245,241,232,.985) !important;
+  }
+
+  .chip.selected span,
+  .chip.selected .chip-note{
+    color:rgba(245,241,232,.52) !important;
+  }
+
+  @media (max-width:420px){
+    .chips{
+      gap:11px !important;
+    }
+
+    .chip{
+      min-height:70px !important;
+      padding:12px 10px 11px !important;
+      border-radius:20px !important;
+    }
+
+    .chip > :not(span),
+    .chip .chip-text{
+      font-size:14px !important;
+    }
+
+    .chip span,
+    .chip .chip-note{
+      margin-top:3px !important;
+      font-size:10px !important;
+      line-height:1.16 !important;
+    }
+  }
+</style>
+
+
+<style id="wait-copy-typography-final">
+  .hero-home .absorb-notice span{
+    max-width:min(24ch, 72vw) !important;
+    min-height:40px !important;
+    padding:11px 18px 12px !important;
+    border-radius:999px !important;
+    background:linear-gradient(180deg, rgba(8,6,16,.18), rgba(8,6,16,.10)) !important;
+    border:1px solid rgba(213,179,106,.09) !important;
+    color:rgba(246,234,208,.95) !important;
+    font:italic 600 14.5px/1.26 "Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif !important;
+    letter-spacing:.01em !important;
+    text-align:center !important;
+    text-wrap:balance !important;
+    box-shadow:
+      0 14px 30px rgba(0,0,0,.12),
+      inset 0 1px 0 rgba(255,255,255,.02) !important;
+    backdrop-filter:blur(12px) !important;
+    -webkit-backdrop-filter:blur(12px) !important;
+  }
+
+  .hero-home.home-transitioning .absorb-notice span{
+    animation:absorbMessageLift .68s ease forwards, absorbGlowBreathSoft 2.4s ease-in-out infinite .24s !important;
+  }
+
+  @keyframes absorbGlowBreathSoft{
+    0%,100%{
+      box-shadow:
+        0 14px 30px rgba(0,0,0,.12),
+        inset 0 1px 0 rgba(255,255,255,.02);
+      transform:translateY(0);
+    }
+    50%{
+      box-shadow:
+        0 16px 34px rgba(0,0,0,.14),
+        0 0 14px rgba(232,207,151,.06),
+        inset 0 1px 0 rgba(255,255,255,.02);
+      transform:translateY(-1px);
+    }
+  }
+
+  @media (max-width:420px){
+    .hero-home .absorb-notice span{
+      max-width:min(22ch, 82vw) !important;
+      min-height:38px !important;
+      padding:10px 16px 11px !important;
+      font-size:13.5px !important;
+      line-height:1.28 !important;
+    }
+  }
+</style>
+
+
+<style id="flip-cta-final-polish">
+  #cardStage .footer-actions{
+    width:min(336px, 84vw) !important;
+    margin:14px auto 0 !important;
+    gap:0 !important;
+  }
+
+  #finishBtn{
+    width:min(336px, 84vw) !important;
+    max-width:336px !important;
+    min-height:45px !important;
+    border-radius:999px !important;
+    letter-spacing:.095em !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    padding-left:18px !important;
+    padding-right:18px !important;
+    box-shadow:
+      0 16px 28px rgba(0,0,0,.14),
+      0 0 12px rgba(201,157,81,.05),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+    transition:
+      transform .18s ease,
+      box-shadow .22s ease,
+      filter .22s ease !important;
+  }
+
+  #finishBtn:hover{
+    box-shadow:
+      0 18px 30px rgba(0,0,0,.16),
+      0 0 16px rgba(201,157,81,.07),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+    filter:saturate(1.02);
+  }
+
+  #finishBtn:active{
+    transform:translateY(1px) scale(.996) !important;
+  }
+
+  @media (max-width:420px){
+    #cardStage .footer-actions{
+      width:min(324px, 86vw) !important;
+      margin-top:12px !important;
+    }
+
+    #finishBtn{
+      width:min(324px, 86vw) !important;
+      max-width:324px !important;
+      min-height:44px !important;
+      font-size:12.5px !important;
+      letter-spacing:.09em !important;
+      padding-left:16px !important;
+      padding-right:16px !important;
+    }
+  }
+</style>
+
+
+<style id="mobile-readiness-final-pass">
+  :root{
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+  }
+
+  html, body{
+    min-height:100%;
+    overscroll-behavior-y:none;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  body{
+    padding-left:max(0px, var(--safe-left));
+    padding-right:max(0px, var(--safe-right));
+  }
+
+  #app{
+    min-height:100dvh;
+    min-height:100svh;
+  }
+
+  .hero.hero-home,
+  #cardStage,
+  .result-stage{
+    padding-bottom:max(18px, var(--safe-bottom)) !important;
+  }
+
+  #preludePanel{
+    padding-bottom:max(12px, var(--safe-bottom)) !important;
+  }
+
+  button,
+  .chip,
+  a{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .wide-btn,
+  .ghost-btn,
+  .chip{
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  .wide-btn{
+    will-change:transform;
+  }
+
+  .wide-btn:active,
+  .ghost-btn:active{
+    transform:translateY(1px) scale(.996);
+  }
+
+  .chip:active{
+    transform:translateY(1px) scale(.997);
+  }
+
+  #textAreaWrap .mind-input{
+    font-size:16px !important; /* prevents iOS zoom on focus */
+  }
+
+  #textAreaWrap .mind-input,
+  .wide-btn,
+  .ghost-btn{
+    -webkit-appearance:none;
+    appearance:none;
+  }
+
+  @media (max-width:420px){
+    .hero.hero-home,
+    #cardStage,
+    .result-stage{
+      padding-left:max(10px, var(--safe-left)) !important;
+      padding-right:max(10px, var(--safe-right)) !important;
+    }
+
+    #preludePanel{
+      padding-left:max(8px, var(--safe-left)) !important;
+      padding-right:max(8px, var(--safe-right)) !important;
+    }
+
+    .wide-btn,
+    .ghost-btn{
+      min-height:44px !important;
+    }
+
+    .chip{
+      min-height:68px !important;
+    }
+
+    #saveImageBtn,
+    #backHomeBtn,
+    #finishBtn,
+    #beginBtn{
+      scroll-margin-bottom:96px;
+    }
+  }
+</style>
+
+
+<style id="post-vercel-mobile-fixes">
+  /* smoother contextual input reveal */
+  .contextual-input{
+    transform-origin:top center !important;
+    filter:blur(2px);
+    clip-path:inset(0 0 100% 0 round 20px);
+    transition:
+      max-height .46s cubic-bezier(.22,.8,.2,1),
+      opacity .34s ease,
+      transform .46s cubic-bezier(.22,.8,.2,1),
+      margin-top .46s cubic-bezier(.22,.8,.2,1),
+      filter .34s ease,
+      clip-path .46s cubic-bezier(.22,.8,.2,1) !important;
+  }
+  .contextual-input.show{
+    clip-path:inset(0 round 20px);
+    filter:blur(0);
+    margin-top:10px !important;
+    max-height:118px !important;
+    opacity:1 !important;
+    transform:translateY(0) scale(1) !important;
+  }
+
+  /* homepage retreat feels absorbed, not just hidden */
+  .hero-home.home-transitioning .home-question,
+  .hero-home.home-transitioning #moodGrid,
+  .hero-home.home-transitioning #textAreaWrap,
+  .hero-home.home-transitioning .home-begin-wrap{
+    opacity:0 !important;
+    transform:translateY(16px) scale(.985) !important;
+    filter:blur(6px) !important;
+    pointer-events:none !important;
+    transition:
+      opacity .44s ease,
+      transform .56s cubic-bezier(.2,.8,.2,1),
+      filter .44s ease !important;
+  }
+  .hero-home.home-transitioning .chips .chip:not(.absorbing){
+    opacity:0 !important;
+    transform:translateY(-14px) scale(.9) !important;
+    filter:blur(8px) !important;
+    transition:
+      opacity .56s ease,
+      transform .66s cubic-bezier(.18,.82,.24,1),
+      filter .56s ease !important;
+  }
+  .hero-home.home-transitioning .eye-wrap{
+    opacity:.96 !important;
+    transform:scale(1.015) !important;
+    transition:opacity .44s ease, transform .58s ease !important;
+  }
+
+  /* centered prelude with ritual eye and breath */
+  #preludePanel{
+    text-align:center !important;
+    width:min(408px, 92vw) !important;
+    margin:0 auto !important;
+    padding:18px 10px 14px !important;
+  }
+  .ritual-eye-wrap{
+    width:136px;
+    margin:2px auto 12px;
+    position:relative;
+  }
+  .ritual-eye-wrap::before{
+    content:"";
+    position:absolute;
+    inset:18% 12% 14%;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, rgba(124,92,255,.18), rgba(124,92,255,0) 68%);
+    filter:blur(14px);
+    pointer-events:none;
+  }
+  .ritual-eye-svg{
+    width:100%;
+    display:block;
+    overflow:visible;
+  }
+  .ritual-eye-iris{
+    transform-origin:110px 65px;
+    animation:ritualIrisBreathe 3.2s ease-in-out infinite;
+  }
+  .ritual-lid-top,
+  .ritual-lid-bottom{
+    transform-origin:110px 65px;
+    animation:ritualBlink 4.6s ease-in-out infinite;
+  }
+  @keyframes ritualIrisBreathe{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+  }
+  @keyframes ritualBlink{
+    0%, 40%, 100%{opacity:1}
+    44%, 48%{opacity:.55}
+    46%{opacity:.18}
+  }
+  #preludePanel .ritual-copy{
+    max-width:21ch !important;
+    margin:0 auto 10px !important;
+    min-height:60px !important;
+    text-align:center !important;
+  }
+  #preludePanel .tiny{
+    max-width:18ch !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+
+  /* flip page card name a bit lower */
+  #cardStage .card-art{
+    margin:6px auto 20px !important;
+  }
+  #cardStage .card-name{
+    margin-top:10px !important;
+  }
+
+  /* remove direction / best window from result page only */
+  #resultStage .oracle-sign-meta{
+    display:none !important;
+  }
+  #resultStage .oracle-sign-omen{
+    margin-bottom:0 !important;
+    min-height:228px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  #resultStage .result-actions{
+    margin-top:18px !important;
+  }
+
+  @media (max-width:420px){
+    .contextual-input.show{
+      max-height:110px !important;
+      margin-top:9px !important;
+    }
+    #preludePanel{
+      width:min(390px, 92vw) !important;
+      padding:16px 8px 12px !important;
+    }
+    .ritual-eye-wrap{
+      width:126px;
+      margin-bottom:10px;
+    }
+    #preludePanel .ritual-copy{
+      max-width:19.5ch !important;
+      min-height:56px !important;
+    }
+    #cardStage .card-art{
+      margin-bottom:18px !important;
+    }
+    #resultStage .oracle-sign-omen{
+      min-height:208px !important;
+    }
+    #resultStage .result-actions{
+      margin-top:16px !important;
+    }
+  }
+</style>
+
+</head>
+<body>
+<!-- cleaned flow version: unused overlays and superseded style patches removed -->
+<div class="sky"></div>
+
+<div id="app">
+  <div class="shell">
+    <div class="orbital-ring"></div>
+
+    <section class="hero hero-home">
+      <div class="eye-wrap tilt" id="eyeWrap">
+        <div class="aura"></div>
+        <svg id="eyeSvg" viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="irisGrad" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#7bf3ff"></stop>
+              <stop offset="38%" stop-color="#8d75ff"></stop>
+              <stop offset="75%" stop-color="#2d1c58"></stop>
+              <stop offset="100%" stop-color="#120d22"></stop>
+            </radialGradient>
+            <radialGradient id="pupilGlow" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#fff4d4" stop-opacity=".8"></stop>
+              <stop offset="45%" stop-color="#d5b36a" stop-opacity=".22"></stop>
+              <stop offset="100%" stop-color="#d5b36a" stop-opacity="0"></stop>
+            </radialGradient>
+            <linearGradient id="lidGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1b1432"></stop>
+              <stop offset="100%" stop-color="#090611"></stop>
+            </linearGradient>
+            <clipPath id="eyeClipPath">
+              <path d="M35 124 C102 42, 318 42, 385 124 C318 206, 102 206, 35 124 Z"></path>
+            </clipPath>
+          </defs>
+
+          <g transform="translate(0,6)">
+            <path id="eyeTapArea" d="M35 124 C102 42, 318 42, 385 124 C318 206, 102 206, 35 124 Z" fill="transparent"></path>
+            <ellipse cx="210" cy="124" rx="158" ry="84" fill="rgba(255,255,255,.03)"></ellipse>
+            <path d="M35 124 C102 42, 318 42, 385 124 C318 206, 102 206, 35 124 Z" fill="#120d22" stroke="rgba(213,179,106,.62)" stroke-width="4"></path>
+            <path d="M54 124 C111 61, 309 61, 366 124 C309 187, 111 187, 54 124 Z" fill="rgba(255,255,255,.025)" stroke="rgba(255,255,255,.07)" stroke-width="1.5"></path>
+
+            <g class="irisGlow">
+              <circle class="iris-ring" cx="210" cy="124" r="58" fill="url(#irisGrad)" stroke="rgba(213,179,106,.48)" stroke-width="2"></circle>
+              <circle class="pupil-core" cx="210" cy="124" r="21" fill="#05030b"></circle>
+              <circle class="pupil-halo" cx="210" cy="124" r="66" fill="url(#pupilGlow)" opacity=".9"></circle>
+              <circle class="pupil-glint" cx="190" cy="104" r="10" fill="rgba(255,255,255,.62)"></circle>
+              <circle class="pupil-glint-2" cx="232" cy="144" r="4" fill="rgba(255,255,255,.4)"></circle>
+            </g>
+
+            <path d="M118 64 Q210 24 302 64" fill="none" stroke="rgba(213,179,106,.34)" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M118 184 Q210 224 302 184" fill="none" stroke="rgba(213,179,106,.24)" stroke-width="3" stroke-linecap="round"></path>
+
+            <g id="lids" clip-path="url(#eyeClipPath)">
+              <path class="lid-top" d="M35 124 C102 42, 318 42, 385 124 L385 8 L35 8 Z" fill="url(#lidGrad)"></path>
+              <path class="lid-bottom" d="M35 124 C102 206, 318 206, 385 124 L385 252 L35 252 Z" fill="url(#lidGrad)"></path>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div id="homePanel" class="panel active">
+        <div class="ritual-copy home-question" id="homeCopy">
+          <span>What would you like the Eye</span>
+          <span>to absorb today?</span>
+        </div>
+
+        <div class="chips" id="moodGrid">
+          <button class="chip" data-mood="heavy">😵 Drained<span>Running on empty</span></button>
+          <button class="chip" data-mood="overwhelmed">🌀 Spiraling<span>Too many thoughts at once</span></button>
+          <button class="chip" data-mood="lost">😶 Lonely<span>Disconnected or unseen</span></button>
+          <button class="chip" data-mood="unsure">💸 Pressured<span>Money, bills, and daily weight</span></button>
+        </div>
+
+        <div id="textAreaWrap" class="home-prayer-inline contextual-input">
+<div class="mind-input-row">
+            <input id="mindText" class="mind-input" type="text" placeholder="Name what this is about" autocomplete="off" maxlength="28">
+          </div>
+          <div class="contextual-input-note">Private and anonymous.</div>
+        </div>
+
+        <div class="footer-actions home-begin-wrap">
+          <button class="wide-btn" id="beginBtn" disabled="">Let the Eye take it in</button>
+        </div>
+</div>
+
+      <div class="absorb-notice" id="absorbNotice"><span>Received. What felt heavy is becoming your next sign.</span></div>
+
+      <div id="preludePanel" class="panel">
+        <div class="ritual-eye-wrap" aria-hidden="true">
+          <svg class="ritual-eye-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
+            <path class="ritual-eye-outline" d="M20 65 Q63 22 110 22 Q157 22 200 65 Q157 108 110 108 Q63 108 20 65Z" fill="none" stroke="rgba(232,207,151,.42)" stroke-width="2"/>
+            <circle class="ritual-eye-iris" cx="110" cy="65" r="22" fill="rgba(151,119,255,.34)" stroke="rgba(245,241,232,.42)" stroke-width="1.5"/>
+            <circle class="ritual-eye-pupil" cx="110" cy="65" r="10" fill="rgba(26,20,43,.82)"/>
+            <path class="ritual-lid-top" d="M20 65 Q63 22 110 22 Q157 22 200 65" fill="none" stroke="rgba(232,207,151,.26)" stroke-width="7" stroke-linecap="round"/>
+            <path class="ritual-lid-bottom" d="M20 65 Q63 108 110 108 Q157 108 200 65" fill="none" stroke="rgba(232,207,151,.18)" stroke-width="7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="ritual-copy" id="preludeCopy"></div>
+        <div class="tiny prelude-tiny">Breathe in. Breathe out.</div>
+      </div>
+    </section>
+
+    <section id="cardStage" class="glass card-stage">
+      <div class="stage-copy" id="stageCopy">Today’s sign is coming into view…</div>
+      <div class="card-3d-wrap">
+        <div class="tarot-card float" id="tarotCard">
+          <div class="card-face card-back">
+            <div class="back-symbol">
+              <svg viewBox="0 0 200 300" width="85%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="6" y="6" width="188" height="288" rx="24" fill="none" stroke="rgba(213,179,106,.4)"></rect>
+                <circle cx="100" cy="150" r="54" fill="none" stroke="rgba(213,179,106,.5)" stroke-width="2"></circle>
+                <circle cx="100" cy="150" r="18" fill="rgba(213,179,106,.16)" stroke="rgba(245,241,232,.4)" stroke-width="1.5"></circle>
+                <path d="M40 150 Q100 88 160 150 Q100 212 40 150Z" fill="none" stroke="rgba(245,241,232,.26)" stroke-width="2"></path>
+                <path d="M100 36 L108 56 L128 64 L108 72 L100 92 L92 72 L72 64 L92 56 Z" fill="rgba(213,179,106,.28)"></path>
+                <path d="M100 208 L108 228 L128 236 L108 244 L100 264 L92 244 L72 236 L92 228 Z" fill="rgba(213,179,106,.18)"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="card-face card-front">
+            <div class="frame"></div>
+            <div class="card-art" id="cardArt"></div>
+            <div class="card-name" id="cardName">The Star</div>
+            <div class="card-tag" id="cardTag">UPRIGHT GUIDANCE</div>
+            <div class="card-guidance" id="cardGuidance"></div>
+            <div class="card-action" id="cardAction"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button class="wide-btn" id="finishBtn">Open today’s sign</button>
+      </div>
+    </section>
+    <section id="resultStage" class="glass result-stage">
+      <div class="stage-copy result-copy" id="resultCopy"></div>
+      <div class="oracle-sign-card">
+        <div class="oracle-sign-art" id="resultArt"></div>
+        <div class="oracle-sign-name" id="resultName">The Star</div>
+        <div class="oracle-sign-omen" id="resultOmen"></div>
+        <div class="oracle-sign-meta">
+          <div class="oracle-sign-chip">
+            <div class="oracle-sign-chip-label">Direction</div>
+            <div class="oracle-sign-chip-value" id="resultDirection"></div>
+          </div>
+          <div class="oracle-sign-chip">
+            <div class="oracle-sign-chip-label">Best window</div>
+            <div class="oracle-sign-chip-value" id="resultWindow"></div>
+          </div>
+        </div>
+      </div>
+<div class="footer-actions result-actions">
+        <button class="wide-btn" id="saveImageBtn">Save sign</button>
+        <button class="ghost-btn" id="backHomeBtn">Back home</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<button class="music-btn hidden" id="musicBtn" aria-label="Toggle sound">♫</button>
+
+<div class="awakening-overlay" id="awakeningOverlay">
+  <div class="overlay-card glass">
+    <svg class="overlay-eye" viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M35 124 C102 42, 318 42, 385 124 C318 206, 102 206, 35 124 Z" fill="#120d22" stroke="rgba(213,179,106,.62)" stroke-width="4"></path>
+      <circle cx="210" cy="124" r="58" fill="url(#irisGrad)" stroke="rgba(213,179,106,.48)" stroke-width="2"></circle>
+      <circle cx="210" cy="124" r="21" fill="#05030b"></circle>
+      <circle cx="190" cy="104" r="10" fill="rgba(255,255,255,.62)"></circle>
+    </svg>
+    <h2 class="overlay-title">Awakening</h2>
+    <p class="overlay-text">
+      Fortunate soul, you have awakened your guardian.
+      From this moment on, I remain with you — a quiet presence,
+      a steady light, a guide whenever your heart seeks direction.
+    </p>
+    <p class="overlay-small">This appears only once.</p>
+  </div>
+</div>
+
+<div class="limit-overlay" id="limitOverlay">
+  <div class="overlay-card glass">
+    <div class="overlay-title" style="font-size:24px">The Eye is full for today</div>
+    <p class="overlay-text">
+      The Eye has had its fill of heavy energy for today.
+      Come back tomorrow, and it will be ready to take in more.
+    </p>
+    <p class="overlay-small" id="returnDateText"></p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'guardian_eye_v2';
+  const TEST_MODE = false; // live daily-limit behavior enabled
+  const todayKey = () => new Date().toISOString().slice(0,10);
+
+
+  const moodLinePools = {
+  "heavy": [
+    "You have been carrying too much.",
+    "You have been carrying quiet exhaustion.",
+    "You have been carrying invisible strain.",
+    "You have been carrying worn-down energy.",
+    "You have been carrying more than enough.",
+    "You have been carrying too many demands.",
+    "You have been carrying the whole day.",
+    "You have been carrying too little rest.",
+    "You have been carrying steady pressure.",
+    "You have been carrying a tired ache.",
+    "You have been carrying too many asks.",
+    "You have been carrying low reserves.",
+    "You have been carrying silent fatigue.",
+    "You have been carrying one thing too many.",
+    "You have been carrying long strain.",
+    "You have been carrying spent energy.",
+    "You have been carrying a lot alone.",
+    "You have been carrying too much effort.",
+    "You have been carrying more than you show.",
+    "You have been carrying a tired heart.",
+    "Your energy feels thin today.",
+    "Your energy feels overused.",
+    "Your energy feels low and quiet.",
+    "Your energy feels worn down.",
+    "Your energy feels borrowed.",
+    "Your energy feels far away.",
+    "Your energy feels stretched thin.",
+    "Your energy feels asked for.",
+    "Your energy feels hard to refill.",
+    "Your energy feels close to empty.",
+    "Your energy feels tender.",
+    "Your energy feels spent.",
+    "Your energy feels pulled apart.",
+    "Your energy feels late to return.",
+    "Your energy feels heavy today.",
+    "Your energy feels easy to lose.",
+    "Your energy feels behind you.",
+    "Your energy feels all used up.",
+    "Your energy feels quietly tired.",
+    "Your energy feels overdue for softness.",
+    "This tiredness is real.",
+    "This tiredness has weight.",
+    "This tiredness makes sense.",
+    "This tiredness is asking for care.",
+    "This tiredness is not laziness.",
+    "This tiredness is not small.",
+    "This tiredness deserves honesty.",
+    "This tiredness has been earned.",
+    "This tiredness is hard to hide.",
+    "This tiredness has been building.",
+    "This tiredness reaches deep.",
+    "This tiredness is allowed here.",
+    "This tiredness needs less pressure.",
+    "This tiredness deserves gentleness.",
+    "This tiredness is older than today.",
+    "This tiredness has stayed too long.",
+    "This tiredness needs room.",
+    "This tiredness wants relief.",
+    "This tiredness does not need proof.",
+    "This tiredness can soften now.",
+    "You do not need to keep proving yourself.",
+    "You do not need to stay composed right now.",
+    "You do not need to outrun this exhaustion.",
+    "You do not need to hide your limit.",
+    "You do not need to push through this moment.",
+    "You do not need to earn rest again.",
+    "You do not need to act less tired.",
+    "You do not need to make this look easy.",
+    "You do not need to carry the extra weight.",
+    "You do not need to stay efficient here.",
+    "You do not need to explain this fatigue.",
+    "You do not need to pretend you are fine.",
+    "You do not need to keep going the same way.",
+    "You do not need to stay available to everything.",
+    "You do not need to be stronger than this.",
+    "You do not need to answer every demand.",
+    "You do not need to hold all of it tonight.",
+    "You do not need to be endlessly useful.",
+    "You do not need to turn this into discipline.",
+    "You do not need to resist softness.",
+    "Let some of this heaviness loosen.",
+    "Let some of this tiredness loosen.",
+    "Let some of this pressure loosen.",
+    "Let some of this strain loosen.",
+    "Let some of this fatigue loosen.",
+    "Let some of this effort soften.",
+    "Let some of this burden ease.",
+    "Let some of this weight exhale.",
+    "Let some of this ache settle.",
+    "Let some of this depletion rest.",
+    "Let some of this weariness soften.",
+    "Let some of this exhaustion unclench.",
+    "Let some of this load fall quieter.",
+    "Let some of this demand release.",
+    "Let some of this tension grow lighter.",
+    "Let some of this overwork drift off.",
+    "Let some of this low energy breathe.",
+    "Let some of this overgiving stop here.",
+    "Let some of this pressure leave your shoulders.",
+    "Let some of this tiredness be held."
+  ],
+  "overwhelmed": [
+    "Your thoughts have been running hard.",
+    "Your thoughts have been crowding the room.",
+    "Your thoughts have been arriving too fast.",
+    "Your thoughts have been asking too much.",
+    "Your thoughts have been louder than peace.",
+    "Your thoughts have been looping again.",
+    "Your thoughts have been piling up.",
+    "Your thoughts have been hard to quiet.",
+    "Your thoughts have been racing ahead.",
+    "Your thoughts have been filling every pause.",
+    "Your thoughts have been pushing for certainty.",
+    "Your thoughts have been hard to leave.",
+    "Your thoughts have been circling the same fear.",
+    "Your thoughts have been overstaying their welcome.",
+    "Your thoughts have been stirring the air.",
+    "Your thoughts have been hard to trust.",
+    "Your thoughts have been everywhere at once.",
+    "Your thoughts have been too busy to land.",
+    "Your thoughts have been pulling at you.",
+    "Your thoughts have been making the room smaller.",
+    "Not every thought needs your attention.",
+    "Not every thought deserves a full answer.",
+    "Not every thought is a warning.",
+    "Not every thought needs to be solved.",
+    "Not every thought is telling the truth.",
+    "Not every thought needs to stay.",
+    "Not every thought deserves your fear.",
+    "Not every thought has to be followed.",
+    "Not every thought needs a conclusion.",
+    "Not every thought needs another loop.",
+    "Not every thought is urgent.",
+    "Not every thought needs a response.",
+    "Not every thought has authority here.",
+    "Not every thought deserves belief.",
+    "Not every thought is a message.",
+    "Not every thought needs more thinking.",
+    "Not every thought asks for action.",
+    "Not every thought needs your energy.",
+    "Not every thought should set the pace.",
+    "Not every thought belongs in your body.",
+    "This spiral feels loud today.",
+    "This spiral has been feeding on uncertainty.",
+    "This spiral is asking for less noise.",
+    "This spiral has been hard to interrupt.",
+    "This spiral is not the whole truth.",
+    "This spiral has been circling one fear.",
+    "This spiral has been wearing you out.",
+    "This spiral wants more space than it deserves.",
+    "This spiral has made simple things feel sharp.",
+    "This spiral has been hard on your body.",
+    "This spiral can loosen now.",
+    "This spiral has been louder than facts.",
+    "This spiral has been pulling at your breath.",
+    "This spiral is not your whole self.",
+    "This spiral has been asking for certainty.",
+    "This spiral has been hard to set down.",
+    "This spiral can grow quieter.",
+    "This spiral has been taking up too much room.",
+    "This spiral has been exhausting to carry.",
+    "This spiral can pass through.",
+    "You can set down one thought at a time.",
+    "You can leave one worry unanswered.",
+    "You can pause before following this fear.",
+    "You can step back from the loop.",
+    "You can let one thought pass through.",
+    "You can stop feeding the same question.",
+    "You can soften the need to know.",
+    "You can loosen your grip on the outcome.",
+    "You can let uncertainty stay uncertain.",
+    "You can come back to your breath.",
+    "You can refuse one more spiral.",
+    "You can move slower than your thoughts.",
+    "You can let the noise thin out.",
+    "You can make less room for panic.",
+    "You can choose one quiet thing.",
+    "You can stop arguing with every thought.",
+    "You can set the pace lower.",
+    "You can let the mind unclench.",
+    "You can turn down the volume here.",
+    "You can leave this thought unchased.",
+    "Let the noise grow quieter.",
+    "Let the rush lose some speed.",
+    "Let the loop weaken a little.",
+    "Let the pressure in your mind ease.",
+    "Let the next thought arrive softer.",
+    "Let the mental weather settle.",
+    "Let the inner static thin out.",
+    "Let the urgency step back.",
+    "Let the spiral loosen its hold.",
+    "Let your breath interrupt the rush.",
+    "Let the thought pass without a chase.",
+    "Let the mind have less to carry.",
+    "Let the room inside you widen.",
+    "Let the next moment be simpler.",
+    "Let some certainty go for now.",
+    "Let the panic lose its script.",
+    "Let the loop miss one turn.",
+    "Let the fear speak more quietly.",
+    "Let your mind rest between thoughts.",
+    "Let the overthinking soften here."
+  ],
+  "lost": [
+    "You have felt far away.",
+    "You have felt hard to reach.",
+    "You have felt quietly alone.",
+    "You have felt unseen in the room.",
+    "You have felt distance all day.",
+    "You have felt outside the warmth.",
+    "You have felt easy to miss.",
+    "You have felt left with your own silence.",
+    "You have felt apart from people.",
+    "You have felt unheld lately.",
+    "You have felt separate in a deep way.",
+    "You have felt absent in company.",
+    "You have felt the distance sharply.",
+    "You have felt unreceived.",
+    "You have felt farther than you wanted.",
+    "You have felt the echo of disconnection.",
+    "You have felt unseen for too long.",
+    "You have felt lonely in plain sight.",
+    "You have felt distant from comfort.",
+    "You have felt outside the circle.",
+    "Loneliness can feel larger at night.",
+    "Loneliness can turn silence into weight.",
+    "Loneliness can make a small room echo.",
+    "Loneliness can sit close and still ache.",
+    "Loneliness can feel physical sometimes.",
+    "Loneliness can make time feel slower.",
+    "Loneliness can make warmth feel far away.",
+    "Loneliness can sharpen ordinary moments.",
+    "Loneliness can hide inside busy days.",
+    "Loneliness can make tenderness feel rare.",
+    "Loneliness can blur the edges of hope.",
+    "Loneliness can feel hard to name.",
+    "Loneliness can live in crowded places.",
+    "Loneliness can make comfort feel distant.",
+    "Loneliness can settle in quietly.",
+    "Loneliness can make home feel farther away.",
+    "Loneliness can ask too much of the heart.",
+    "Loneliness can make you feel untethered.",
+    "Loneliness can linger after people leave.",
+    "Loneliness can make connection feel fragile.",
+    "Some distance has been heavy.",
+    "Some silence has been heavier than usual.",
+    "Some absence has been hard to carry.",
+    "Some part of you wants to be reached.",
+    "Some part of you misses being met.",
+    "Some distance has stayed too long.",
+    "Some quiet has started to ache.",
+    "Some part of you needs closeness.",
+    "Some moments feel farther than they are.",
+    "Some of this ache comes from disconnection.",
+    "Some room inside you wants company.",
+    "Some of this sadness wants warmth.",
+    "Some of this heaviness is distance.",
+    "Some of this quiet needs care.",
+    "Some part of you wants a softer landing.",
+    "Some of this feeling is being unseen.",
+    "Some of this ache is not small.",
+    "Some of this loneliness needs less judgment.",
+    "Some of this distance can soften now.",
+    "Some of this quiet is asking for light.",
+    "You do not need to pretend this feels fine.",
+    "You do not need to make this loneliness smaller.",
+    "You do not need to hide the ache of distance.",
+    "You do not need to act untouched by this silence.",
+    "You do not need to minimize needing warmth.",
+    "You do not need to apologize for wanting closeness.",
+    "You do not need to dress this up as independence.",
+    "You do not need to stay cheerful for this feeling.",
+    "You do not need to call this nothing.",
+    "You do not need to be above missing people.",
+    "You do not need to make disconnection sound noble.",
+    "You do not need to be less human here.",
+    "You do not need to turn this ache into poise.",
+    "You do not need to hide the part that wants comfort.",
+    "You do not need to carry this in perfect silence.",
+    "You do not need to keep distance polished.",
+    "You do not need to act stronger than this emptiness.",
+    "You do not need to prove you can handle all of it.",
+    "You do not need to go without softness here.",
+    "You do not need to ignore this longing.",
+    "Let some of this distance soften.",
+    "Let some of this silence loosen.",
+    "Let some of this loneliness be held.",
+    "Let some of this ache feel seen.",
+    "Let some of this quiet warm up.",
+    "Let some of this separation ease.",
+    "Let some of this emptiness loosen.",
+    "Let some of this disconnection rest.",
+    "Let some of this isolation grow lighter.",
+    "Let some of this longing breathe.",
+    "Let some of this sadness find warmth.",
+    "Let some of this solitude stop hurting.",
+    "Let some of this distance come closer.",
+    "Let some of this quiet make room for comfort.",
+    "Let some of this ache meet gentleness.",
+    "Let some of this far-away feeling settle.",
+    "Let some of this loneliness lose its edge.",
+    "Let some of this silence become softer.",
+    "Let some of this heaviness be reached.",
+    "Let some of this distance exhale."
+  ],
+  "unsure": [
+    "The pressure has been constant.",
+    "The pressure has been sitting close.",
+    "The pressure has been in everything.",
+    "The pressure has been hard to outrun.",
+    "The pressure has been wearing thin edges.",
+    "The pressure has been asking too much.",
+    "The pressure has been there all day.",
+    "The pressure has been built into the hours.",
+    "The pressure has been hard on your breath.",
+    "The pressure has been louder than ease.",
+    "The pressure has been crowding your pace.",
+    "The pressure has been heavy and ordinary.",
+    "The pressure has been expensive in every way.",
+    "The pressure has been living in your body.",
+    "The pressure has been hard to set down.",
+    "The pressure has been turning small things sharp.",
+    "The pressure has been too familiar.",
+    "The pressure has been close behind you.",
+    "The pressure has been asking for more.",
+    "The pressure has been steady for too long.",
+    "Too much has asked for you at once.",
+    "Too much has wanted your attention today.",
+    "Too much has leaned on your capacity.",
+    "Too much has crowded your space.",
+    "Too much has needed an answer.",
+    "Too much has depended on your steadiness.",
+    "Too much has filled the room already.",
+    "Too much has made calm feel far away.",
+    "Too much has made the day feel tight.",
+    "Too much has pulled on your focus.",
+    "Too much has sat on your shoulders.",
+    "Too much has taken up your breath.",
+    "Too much has asked to be managed.",
+    "Too much has called itself urgent.",
+    "Too much has made rest feel late.",
+    "Too much has asked for composure.",
+    "Too much has pressed on your center.",
+    "Too much has made the hours narrow.",
+    "Too much has demanded steadiness.",
+    "Too much has arrived without warning.",
+    "This strain is real.",
+    "This strain has been ongoing.",
+    "This strain does not need a dramatic name.",
+    "This strain is heavier than it looks.",
+    "This strain has lived in your body.",
+    "This strain can wear down good days.",
+    "This strain is not small.",
+    "This strain has been hard to shake.",
+    "This strain asks for softness too.",
+    "This strain is more than a mood.",
+    "This strain can make everything tighter.",
+    "This strain has been in the background too long.",
+    "This strain deserves honesty.",
+    "This strain is not your fault alone.",
+    "This strain can make simple things harder.",
+    "This strain has been asking for space.",
+    "This strain can be set down a little.",
+    "This strain has weight to it.",
+    "This strain can soften here.",
+    "This strain has stayed beyond welcome.",
+    "You do not have to hold every outcome.",
+    "You do not have to carry every deadline alone.",
+    "You do not have to answer all of it tonight.",
+    "You do not have to outrun this pressure.",
+    "You do not have to make this look effortless.",
+    "You do not have to be endlessly available.",
+    "You do not have to stay composed for everyone.",
+    "You do not have to solve the whole week now.",
+    "You do not have to hold it all in your chest.",
+    "You do not have to turn strain into discipline.",
+    "You do not have to keep matching this pace.",
+    "You do not have to treat overload as normal.",
+    "You do not have to make room for every demand.",
+    "You do not have to be stronger than the weight.",
+    "You do not have to keep your jaw tight for this.",
+    "You do not have to perform calm under pressure.",
+    "You do not have to keep absorbing the whole day.",
+    "You do not have to stay braced like this.",
+    "You do not have to prove you can handle more.",
+    "You do not have to carry the whole tomorrow now.",
+    "Let some of this pressure ease.",
+    "Let some of this weight unclench.",
+    "Let some of this urgency step back.",
+    "Let some of this strain loosen.",
+    "Let some of this load grow lighter.",
+    "Let some of this demand fall quieter.",
+    "Let some of this pressure leave your body.",
+    "Let some of this pace slow down.",
+    "Let some of this tension breathe out.",
+    "Let some of this burden rest.",
+    "Let some of this urgency lose its grip.",
+    "Let some of this stress soften here.",
+    "Let some of this strain stop pressing so hard.",
+    "Let some of this demand release.",
+    "Let some of this tightness loosen now.",
+    "Let some of this pressure find an edge to leave by.",
+    "Let some of this over-responsibility exhale.",
+    "Let some of this weight stop following you.",
+    "Let some of this pressure settle lower.",
+    "Let some of this strain be held."
+  ]
+};
+
+  const moodResultTemplates = {
+    heavy: [
+      "From weariness, {card} arrives as today’s sign.",
+      "From depletion, {card} steps forward as your sign.",
+      "From a tired place, {card} arrives with direction.",
+      "From this heaviness, {card} becomes your sign."
+    ],
+    overwhelmed: [
+      "From the spiral, {card} arrives as today’s sign.",
+      "From the noise, {card} steps forward as your sign.",
+      "From the rush, {card} arrives with direction.",
+      "From all this mental weather, {card} becomes your sign."
+    ],
+    lost: [
+      "From the distance, {card} arrives as today’s sign.",
+      "From the silence, {card} steps forward as your sign.",
+      "From this ache, {card} arrives with direction.",
+      "From what felt far away, {card} becomes your sign."
+    ],
+    unsure: [
+      "From the pressure, {card} arrives as today’s sign.",
+      "From the strain, {card} steps forward as your sign.",
+      "From the weight of it all, {card} arrives with direction.",
+      "From this pressure, {card} becomes your sign."
+    ]
+  };
+
+  function pickMoodLine(mood){
+    const pool = moodLinePools[mood] || [];
+    if(!pool.length) return "Your sign is forming.";
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+
+  function getShareLeadLine(){
+    const line = (currentMoodLine || '').trim();
+    if(line) return line;
+    return currentCard ? currentCard.guidance : "Your sign is forming.";
+  }
+
+  function buildResultBridge(card){
+    const templates = moodResultTemplates[selectedMood] || [];
+    if(!templates.length) return "";
+    const line = templates[Math.floor(Math.random() * templates.length)];
+    return line.replace(/\{card\}/g, card.name);
+  }
+
+  const moodMeta = {
+    lost: {
+      label: 'Lonely',
+      prelude: "When you feel disconnected or unseen, let the Eye draw that heaviness out of you."
+    },
+    overwhelmed: {
+      label: 'Spiraling',
+      prelude: "Too many thoughts are pulling at you at once. Let the Eye quiet the spiral."
+    },
+    unsure: {
+      label: 'Pressured',
+      prelude: "Money, bills, and daily weight can build up fast. Let the Eye absorb some of that pressure."
+    },
+    hopeful: {
+      label: 'Hopeful',
+      prelude: "Your energy is opening. Let’s give that spark a direction it can grow into."
+    },
+    heavy: {
+      label: 'Drained',
+      prelude: "You’ve been running on empty for too long. Let the Eye take some of that heaviness from you."
+    },
+    calm: {
+      label: 'Calm',
+      prelude: "You’re already close to alignment. Let’s listen for what wants to deepen."
+    }
+  };
+
+  const tarotCards = [
+    {id:'fool', name:'The Fool', art:'path', moods:['hopeful','unsure','lost'], guidance:'A fresh beginning is already opening beneath your feet. Trust the first honest step, even if it feels small.', action:'Do one simple thing today before you overthink it.'},
+    {id:'magician', name:'The Magician', art:'hands', moods:['hopeful','calm','unsure'], guidance:'You already hold more ability than you realize. Focus your energy on what you can shape now.', action:'Write down one thing you can influence today — and act on it.'},
+    {id:'high-priestess', name:'The High Priestess', art:'moon', moods:['heavy','calm','unsure'], guidance:'Your intuition is speaking in quiet ways. Slow down enough to hear what your deeper self already knows.', action:'Spend two minutes in silence before making your next decision.'},
+    {id:'empress', name:'The Empress', art:'bloom', moods:['heavy','hopeful','calm'], guidance:'Nourishment is not a luxury. When you care for yourself, your energy returns to you.', action:'Eat, rest, or hydrate with intention today.'},
+    {id:'emperor', name:'The Emperor', art:'pillar', moods:['overwhelmed','unsure','lost'], guidance:'Structure can be healing. A steady boundary or simple plan will help your mind feel safer.', action:'Choose one priority and protect time for it.'},
+    {id:'hierophant', name:'The Hierophant', art:'temple', moods:['lost','unsure','calm'], guidance:'There is wisdom in returning to what grounds you. Familiar rituals can help restore inner trust.', action:'Repeat one healthy routine that normally centers you.'},
+    {id:'lovers', name:'The Lovers', art:'twin', moods:['unsure','hopeful','heavy'], guidance:'Alignment begins with honesty. Choose what feels true, not only what feels easy.', action:'Ask yourself: what choice feels most like me?'}, 
+    {id:'chariot', name:'The Chariot', art:'starpath', moods:['overwhelmed','hopeful','lost'], guidance:'Momentum returns when your heart and will move in the same direction. You are capable of forward motion.', action:'Take one bold but manageable step today.'},
+    {id:'strength', name:'Strength', art:'lion', moods:['heavy','overwhelmed','lost'], guidance:'Your softness is not weakness. Quiet courage is already carrying you farther than you think.', action:'Place a hand on your chest and take three slow breaths.'},
+    {id:'hermit', name:'The Hermit', art:'lantern', moods:['calm','heavy','unsure'], guidance:'Answers ripen in stillness. Pull back from noise long enough to hear your own truth.', action:'Give yourself ten minutes away from feeds, messages, and pressure.'},
+    {id:'wheel', name:'Wheel of Fortune', art:'wheel', moods:['lost','hopeful','overwhelmed'], guidance:'Energy changes. What feels stuck today is already beginning to move in a new direction.', action:'Look for one sign of movement, however small.'},
+    {id:'justice', name:'Justice', art:'scales', moods:['unsure','calm','overwhelmed'], guidance:'Lonely grows when you honor truth over fear. Let your next choice reflect your real values.', action:'Name what feels fair, clean, and true.'},
+    {id:'hanged-man', name:'The Hanged Man', art:'halo', moods:['overwhelmed','unsure','heavy'], guidance:'A pause can be sacred. You may not need to push harder — you may need to see differently.', action:'Delay one non-urgent decision until your body feels calmer.'},
+    {id:'death', name:'Transformation', art:'phoenix', moods:['lost','heavy','hopeful'], guidance:'Something is ready to fall away so new energy can arrive. Change here is a doorway, not a loss.', action:'Release one habit, thought, or task that is draining you.'},
+    {id:'temperance', name:'Temperance', art:'water', moods:['overwhelmed','calm','heavy'], guidance:'Balance returns through gentleness, not force. Small adjustments will restore your center.', action:'Drink water slowly and soften your pace for the next hour.'},
+    {id:'devil', name:'The Flame Keeper', art:'flame', moods:['lost','overwhelmed','unsure'], guidance:'What feels intense can still be transformed. Awareness gives you your power back.', action:'Notice one pattern you no longer want to feed today.'},
+    {id:'tower', name:'The Tower of Light', art:'lightning', moods:['overwhelmed','lost','heavy'], guidance:'Breakthrough can arrive disguised as disruption. What clears away now may create room for truth.', action:'Let one false pressure fall away. You do not have to carry everything.'},
+    {id:'star', name:'The Star', art:'star', moods:['heavy','hopeful','lost'], guidance:'Pressured is already finding its way back to you. Even now, something brighter is quietly returning.', action:'Do one gentle thing tonight that helps you feel restored.'},
+    {id:'moon', name:'The Moon', art:'crescent', moods:['unsure','heavy','lost'], guidance:'Not everything unclear is dangerous. Stay with yourself as the path slowly reveals its shape.', action:'Write one feeling down instead of trying to solve it immediately.'},
+    {id:'sun', name:'The Sun', art:'sun', moods:['hopeful','calm','heavy'], guidance:'Joy is medicine too. Let yourself receive warmth without needing to earn it first.', action:'Step into daylight, even for a few minutes.'},
+    {id:'judgement', name:'Judgement', art:'trumpet', moods:['lost','hopeful','unsure'], guidance:'You are being called into a truer version of yourself. Listen for the choice that feels awakening.', action:'Say yes to one thing that feels deeply aligned.'},
+    {id:'world', name:'The World', art:'orbit', moods:['calm','hopeful','overwhelmed'], guidance:'Something in you is coming into wholeness. Trust the progress you’ve already made.', action:'Acknowledge one way you have grown recently.'}
+  ];
+
+  const homeCopyVariants = [
+    "What would you like the Eye<br>to absorb today?"
+  ];
+
+  function setHomeQuestion(alreadyRead=false){
+    const homeCopy = $('homeCopy');
+    if(!homeCopy) return;
+    if(alreadyRead){
+      homeCopy.innerHTML = "Your message is with you now.<br>Come back tomorrow for another reading.";
+    }else{
+      homeCopy.innerHTML = "<span>What would you like the Eye</span><span>to absorb today?</span>";
+    }
+  }
+
+
+  const $ = (id) => document.getElementById(id);
+  const state = loadState();
+
+  let selectedMood = null;
+  let selectedText = '';
+  let currentCard = null;
+  let currentMoodLine = '';
+  let currentExtras = null;
+  let preludeAutoTimer = null;
+  let audioCtx = null;
+  let gainMaster = null;
+  let musicOn = false;
+  let musicTimer = null;
+
+  // init UI
+  updateBadges();
+  setHomeQuestion(false);
+  bindEvents();
+  syncHomeSelectionUI();
+  protectPage();
+  maybeShowAwakening();
+  if (hasReadToday()) {
+    showDailyLimit();
+  }
+
+  function defaultState(){
+    return {
+      activated: false,
+      lastReadDate: null,
+      awakeningCount: 0,
+      readings: []
+    };
+  }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
+    }catch(e){ return defaultState(); }
+  }
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function hasReadToday(){
+    if(TEST_MODE) return false;
+    return state.lastReadDate === todayKey();
+  }
+  function previousDay(dateStr){
+    const d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate()-1);
+    return d.toISOString().slice(0,10);
+  }
+  function nextDay(dateStr){
+    const d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate()+1);
+    return d.toISOString().slice(0,10);
+  }
+  function updateBadges(){
+    const pill = $('awakeningPill');
+    if(pill) pill.textContent = 'The Eye is awakening';
+    const dots = Array.from(document.querySelectorAll('#awakeningDots span'));
+    dots.forEach((dot, i) => dot.classList.toggle('on', i < Math.min(state.awakeningCount || 0, 7)));
+    applyAwakeningVisuals();
+  }
+
+  function applyAwakeningVisuals(){
+    const eyeWrap = $('eyeWrap');
+    if(!eyeWrap) return;
+    eyeWrap.classList.remove('awaken-1','awaken-3','awaken-5','awaken-7');
+    const count = state.awakeningCount || 0;
+    if(count >= 7) eyeWrap.classList.add('awaken-7');
+    else if(count >= 5) eyeWrap.classList.add('awaken-5');
+    else if(count >= 3) eyeWrap.classList.add('awaken-3');
+    else if(count >= 1) eyeWrap.classList.add('awaken-1');
+  }
+  function maybeShowAwakening(){
+    if(!state.activated){
+      state.activated = true;
+      saveState();
+      $('awakeningOverlay').classList.add('show');
+      setTimeout(()=> $('awakeningOverlay').classList.remove('show'), 5000);
+    }
+  }
+
+  function showDailyLimit(){
+    const tomorrow = nextDay(todayKey());
+    $('returnDateText').textContent = `Return on ${new Date(tomorrow+'T12:00:00').toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'})}.`;
+    $('limitOverlay').classList.add('show');
+    $('beginBtn').disabled = true;
+    Array.from(document.querySelectorAll('.chip')).forEach(btn => btn.disabled = true);
+    $('mindText').disabled = true;
+    setTimeout(()=> $('limitOverlay').classList.remove('show'), 3200);
+  }
+
+
+  function getMoodChips(){
+    return Array.from(document.querySelectorAll('#moodGrid .chip'));
+  }
+
+  function syncHomeSelectionUI(){
+    getMoodChips().forEach(chip => {
+      chip.classList.toggle('selected', chip.dataset.mood === selectedMood);
+    });
+
+    const textAreaWrap = $('textAreaWrap');
+    if(textAreaWrap){
+      textAreaWrap.classList.toggle('show', !!selectedMood);
+    }
+
+    const beginBtn = $('beginBtn');
+    if(beginBtn){
+      beginBtn.disabled = !selectedMood;
+    }
+  }
+
+
+  function bindEvents(){
+
+    const updateBeginState = () => {
+      syncHomeSelectionUI();
+    };
+    const eyeTapArea = $('eyeTapArea');
+    if(eyeTapArea){
+      eyeTapArea.addEventListener('click', () => {
+        $('eyeWrap').classList.remove('touch-pulse');
+        void $('eyeWrap').offsetWidth;
+        $('eyeWrap').classList.add('touch-pulse');
+        setTimeout(() => $('eyeWrap').classList.remove('touch-pulse'), 430);
+        if(navigator.vibrate) navigator.vibrate(12);
+      });
+    }
+
+
+    const voiceBtn = $('voiceBtn');
+    if(voiceBtn){ voiceBtn.remove(); }
+
+    getMoodChips().forEach(chip => {
+      chip.addEventListener('click', () => {
+        if(hasReadToday()) return showDailyLimit();
+        selectedMood = chip.dataset.mood;
+        syncHomeSelectionUI();
+      });
+    });
+
+    const mindText = $('mindText');
+    if(mindText){
+      mindText.addEventListener('input', () => {
+        selectedText = mindText.value.trim();
+        updateBeginState();
+      });
+
+      mindText.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          const beginBtn = $('beginBtn');
+          if(beginBtn && !beginBtn.disabled) beginBtn.click();
+        }
+      });
+    }
+
+    const beginBtn = $('beginBtn');
+    if(beginBtn) beginBtn.addEventListener('click', () => {
+      if(hasReadToday()) return showDailyLimit();
+      selectedText = $('mindText').value.trim();
+      if(!selectedMood) return;
+      const heroHome = document.querySelector('.hero-home');
+      if(heroHome) heroHome.classList.add('home-transitioning');
+      startMusic();
+      if(navigator.vibrate) navigator.vibrate([14, 34, 18]);
+      const activeChip = document.querySelector(`.chip[data-mood="${selectedMood}"]`);
+      const notice = $('absorbNotice');
+      const noticeSpan = notice ? notice.querySelector('span') : null;
+      const eyeWrap = $('eyeWrap');
+      const sourceText = formatSourceForResponse(selectedText);
+      currentMoodLine = pickMoodLine(selectedMood);
+
+      if(noticeSpan){
+        noticeSpan.textContent = sourceText
+          ? `Received. The weight around “${sourceText}” is being taken in.`
+          : 'Received. Today\'s heaviness is being taken in.';
+      }
+
+      if(activeChip) activeChip.classList.add('absorbing');
+      if(eyeWrap){
+        eyeWrap.classList.remove('blink');
+        void eyeWrap.offsetWidth;
+        setTimeout(() => eyeWrap.classList.add('blink'), 140);
+        setTimeout(() => eyeWrap.classList.remove('blink'), 760);
+      }
+      if(notice) notice.classList.add('show');
+      setTimeout(() => {
+        if(notice) notice.classList.remove('show');
+        showPrelude(!!sourceText);
+        if(activeChip) activeChip.classList.remove('absorbing');
+      }, 1580);
+    });
+
+    const breatheBtn = $('breatheBtn');
+    if(breatheBtn){
+      breatheBtn.addEventListener('click', () => {
+        if(preludeAutoTimer){ clearTimeout(preludeAutoTimer); preludeAutoTimer = null; }
+        breatheAndReveal(1400);
+      });
+    }
+
+    const skipPreludeBtn = $('skipPreludeBtn');
+    if(skipPreludeBtn){
+      skipPreludeBtn.addEventListener('click', () => {
+        if(preludeAutoTimer){ clearTimeout(preludeAutoTimer); preludeAutoTimer = null; }
+        breatheAndReveal(920);
+      });
+    }
+
+    const finishBtn = $('finishBtn');
+    if(finishBtn) finishBtn.addEventListener('click', finishReading);
+
+    const saveImageBtn = $('saveImageBtn');
+    if(saveImageBtn) saveImageBtn.addEventListener('click', saveReadingImage);
+
+    const backHomeBtn = $('backHomeBtn');
+    if(backHomeBtn) backHomeBtn.addEventListener('click', () => { try{ window.scrollTo({top:0,left:0,behavior:'auto'}); }catch(err){ window.scrollTo(0,0); } resetToHome(false); });
+
+    const musicBtn = $('musicBtn');
+    if(musicBtn) musicBtn.addEventListener('click', toggleMusic);
+
+    const awakeningOverlay = $('awakeningOverlay');
+    if(awakeningOverlay) awakeningOverlay.addEventListener('click', () => awakeningOverlay.classList.remove('show'));
+
+    const limitOverlay = $('limitOverlay');
+    if(limitOverlay) limitOverlay.addEventListener('click', () => limitOverlay.classList.remove('show'));
+
+    updateBeginState();
+  }
+
+  function formatSourceForResponse(text){
+    const cleaned = (text || '')
+      .replace(/[\n\r]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/[“”]/g, '"')
+      .replace(/[<>]/g, '');
+
+    if(!cleaned) return '';
+
+    const shortened = cleaned.length > 42
+      ? cleaned.slice(0, 39).trim().replace(/[.,;:!?-]+$/,'') + '…'
+      : cleaned;
+
+    return shortened;
+  }
+
+
+  function splitRitualCopy(text){
+    const clean = (text || '').replace(/\s+/g, ' ').trim();
+    if(!clean) return ['The Eye is taking in', 'today’s heaviness.'];
+    const parts = clean.split('. ').map(s => s.trim()).filter(Boolean);
+
+    if(parts.length >= 2){
+      const first = parts[0].endsWith('.') ? parts[0] : parts[0] + '.';
+      const second = parts[1];
+      return [first, second];
+    }
+
+    const words = clean.split(' ');
+    if(words.length <= 5) return [clean, ''];
+
+    const splitIndex = Math.ceil(words.length / 2);
+    return [
+      words.slice(0, splitIndex).join(' ').trim(),
+      words.slice(splitIndex).join(' ').trim()
+    ];
+  }
+
+  function renderPreludeCopy(text){
+    const preludeCopy = $('preludeCopy');
+    if(!preludeCopy) return;
+    const [line1, line2] = splitRitualCopy(text);
+    preludeCopy.classList.add('ritual-lines');
+    preludeCopy.innerHTML = `
+      <span class="line line-1">${line1}</span>
+      ${line2 ? `<span class="line line-2">${line2}</span>` : ''}
+    `;
+  }
+
+
+  function showPrelude(fromText=false){
+    const heroHome = document.querySelector('.hero-home');
+    if(heroHome){
+      heroHome.style.removeProperty('display');
+      heroHome.classList.remove('stage-hidden');
+      heroHome.classList.remove('home-transitioning');
+      heroHome.classList.add('prelude-mode');
+    }
+    if(preludeAutoTimer){ clearTimeout(preludeAutoTimer); preludeAutoTimer = null; }
+    $('homePanel').classList.remove('active');
+    $('preludePanel').classList.add('active');
+
+    const sourceText = formatSourceForResponse(selectedText);
+    const defaultPrelude = "The Eye is taking in today’s heaviness. Your sign is forming.";
+    const contextualPrelude = sourceText
+      ? `The weight around “${sourceText}” is being taken in. Your sign is forming.`
+      : defaultPrelude;
+
+    renderPreludeCopy(fromText ? contextualPrelude : defaultPrelude);
+
+    preludeAutoTimer = setTimeout(() => {
+      if($('preludePanel').classList.contains('active')){
+        breatheAndReveal(920);
+      }
+    }, 2800);
+  }
+
+  function breatheAndReveal(delay){
+    if(preludeAutoTimer){ clearTimeout(preludeAutoTimer); preludeAutoTimer = null; }
+    renderPreludeCopy("Your sign is forming.");
+    setTimeout(() => {
+      revealCard();
+    }, delay);
+  }
+
+  function weightedPick(cards){
+    const preferred = cards.filter(c => c.moods.includes(selectedMood));
+    const pool = preferred.length ? preferred : cards;
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+
+
+  function splitStageCopy(text){
+    const clean = (text || '').replace(/\s+/g, ' ').trim();
+    if(!clean) return ['Your sign is', 'ready to appear.'];
+
+    const words = clean.split(' ');
+    if(words.length <= 5) return [clean, ''];
+
+    let splitIndex = Math.ceil(words.length / 2);
+
+    // Prefer to break after natural rhythm words if possible
+    for(let i = Math.max(2, splitIndex - 2); i <= Math.min(words.length - 2, splitIndex + 2); i++){
+      const word = words[i - 1] || '';
+      if(/[.,;:!?]$/.test(word) || ['in','into','through','around','from','today’s','today\'s','your'].includes(word.toLowerCase())){
+        splitIndex = i;
+        break;
+      }
+    }
+
+    const first = words.slice(0, splitIndex).join(' ').trim();
+    const second = words.slice(splitIndex).join(' ').trim();
+    return [first, second];
+  }
+
+  function renderStageCopy(text){
+    const stageCopy = $('stageCopy');
+    if(!stageCopy) return;
+    const [line1, line2] = splitStageCopy(text);
+    stageCopy.classList.add('stage-copy-lines');
+    stageCopy.innerHTML = `
+      <span class="line line-1">${line1}</span>
+      ${line2 ? `<span class="line line-2">${line2}</span>` : ''}
+    `;
+  }
+
+
+  function revealCard(){
+    const heroHome = document.querySelector('.hero-home');
+    if(heroHome){
+      heroHome.classList.remove('prelude-mode');
+      heroHome.classList.add('stage-hidden');
+      heroHome.style.setProperty('display','none','important');
+    }
+    $('preludePanel').classList.remove('active');
+    $('cardStage').classList.add('active');
+
+    renderStageCopy("Your sign is forming.");
+
+    currentCard = pickCard();
+    renderCard(currentCard);
+
+    const tarotCard = $('tarotCard');
+    if(tarotCard){
+      tarotCard.classList.remove('reveal');
+      tarotCard.classList.add('float');
+      tarotCard.classList.add('waiting');
+    }
+
+    if(navigator.vibrate){
+      navigator.vibrate([80, 50, 120]);
+    }
+
+    setTimeout(() => {
+      if(tarotCard){
+        tarotCard.classList.remove('float');
+        tarotCard.classList.remove('waiting');
+        void tarotCard.offsetWidth;
+        tarotCard.classList.add('reveal');
+      }
+    }, 1450);
+  }
+
+
+  function buildReadingExtras(card){
+    const extrasByCard = {
+      'fool': {direction:'East', time:'Early morning'},
+      'magician': {direction:'South', time:'Before noon'},
+      'high-priestess': {direction:'North', time:'After dark'},
+      'empress': {direction:'West', time:'Late afternoon'},
+      'emperor': {direction:'South', time:'Midday'},
+      'hierophant': {direction:'East', time:'Morning'},
+      'lovers': {direction:'West', time:'Sunset'},
+      'chariot': {direction:'South', time:'Early afternoon'},
+      'strength': {direction:'East', time:'Golden hour'},
+      'hermit': {direction:'North', time:'Nightfall'},
+      'wheel': {direction:'West', time:'Mid-morning'},
+      'justice': {direction:'South', time:'Noon'},
+      'hanged-man': {direction:'North', time:'Twilight'},
+      'death': {direction:'West', time:'After sunset'},
+      'temperance': {direction:'East', time:'Dawn'},
+      'devil': {direction:'South', time:'Late night'},
+      'tower': {direction:'West', time:'Storm hour'},
+      'star': {direction:'East', time:'Blue hour'},
+      'moon': {direction:'North', time:'After dark'},
+      'sun': {direction:'South', time:'Midday'},
+      'judgement': {direction:'East', time:'First light'},
+      'world': {direction:'West', time:'Evening'}
+    };
+    return extrasByCard[card.id] || {direction:'East', time:'Late afternoon'};
+  }
+
+  function renderResultCard(card){
+    currentExtras = buildReadingExtras(card);
+    $('resultCopy').textContent = ((currentMoodLine || '').trim()) || buildResultBridge(card);
+    $('resultName').textContent = card.name;
+    $('resultOmen').textContent = card.guidance;
+    $('resultDirection').textContent = currentExtras.direction;
+    $('resultWindow').textContent = currentExtras.time;
+    renderResultArt(card.art);
+  }
+
+  function renderResultArt(type){
+    const art = $('resultArt');
+    const temp = document.createElement('div');
+    temp.id = 'tmpArt';
+    document.body.appendChild(temp);
+    const prev = $('cardArt');
+    const prevHtml = prev ? prev.innerHTML : '';
+    renderArt(type);
+    art.innerHTML = $('cardArt').innerHTML;
+    if(prev) prev.innerHTML = prevHtml;
+    temp.remove();
+  }
+
+  function roundRect(ctx, x, y, w, h, r){
+    const radius = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  function wrapLines(ctx, text, maxWidth, maxLines=3){
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    if(!words.length) return [''];
+    const lines = [];
+    let current = words[0];
+    for(let i=1;i<words.length;i++){
+      const test = current + ' ' + words[i];
+      if(ctx.measureText(test).width <= maxWidth){
+        current = test;
+      }else{
+        lines.push(current);
+        current = words[i];
+        if(lines.length >= maxLines - 1) break;
+      }
+    }
+    const usedWords = lines.join(' ').split(/\s+/).filter(Boolean).length;
+    const remaining = words.slice(usedWords);
+    const tail = (usedWords ? remaining.join(' ') : current + (words.slice(1).length ? ' ' + words.slice(1).join(' ') : ''));
+    if(lines.length < maxLines){
+      lines.push(lines.length ? tail : current);
+    } else if(lines.length){
+      lines[lines.length - 1] = tail;
+    }
+    return lines.map(line => {
+      const trimmed = line.trim();
+      return trimmed.length > 68 ? trimmed.slice(0, 65).trimEnd() + '…' : trimmed;
+    }).filter(Boolean).slice(0, maxLines);
+  }
+
+  function drawCenteredLines(ctx, lines, x, startY, lineHeight){
+    let y = startY;
+    for(const line of lines){
+      ctx.fillText(line, x, y);
+      y += lineHeight;
+    }
+    return y;
+  }
+
+  function drawTarotSymbol(ctx, x, y, w, h, type){
+    ctx.save();
+    ctx.translate(x, y);
+    const cx = w / 2;
+    const cy = h / 2;
+    const scale = Math.min(w, h) / 200;
+
+    function circle(xc, yc, r, fill, stroke=null, sw=1){
+      ctx.beginPath();
+      ctx.arc(xc, yc, r, 0, Math.PI * 2);
+      if(fill){ ctx.fillStyle = fill; ctx.fill(); }
+      if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = sw; ctx.stroke(); }
+    }
+    function path(d, fill=null, stroke=null, sw=1, linecap='round'){
+      const p = new Path2D(d);
+      if(fill){ ctx.fillStyle = fill; ctx.fill(p); }
+      if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = sw; ctx.lineCap = linecap; ctx.lineJoin = 'round'; ctx.stroke(p); }
+    }
+
+    switch(type){
+      case 'moon':
+        circle(cx-10*scale, cy-8*scale, 52*scale, 'rgba(245,241,232,.82)');
+        circle(cx+12*scale, cy-14*scale, 52*scale, '#171127');
+        circle(cx+42*scale, cy-44*scale, 6*scale, 'rgba(245,241,232,.6)');
+        break;
+      case 'sun':
+        circle(cx, cy, 38*scale, 'rgba(255,221,136,.9)');
+        path(`M ${cx} ${cy-76*scale} L ${cx} ${cy-52*scale}
+               M ${cx} ${cy+52*scale} L ${cx} ${cy+76*scale}
+               M ${cx-76*scale} ${cy} L ${cx-52*scale} ${cy}
+               M ${cx+52*scale} ${cy} L ${cx+76*scale} ${cy}
+               M ${cx-54*scale} ${cy-54*scale} L ${cx-36*scale} ${cy-36*scale}
+               M ${cx+36*scale} ${cy+36*scale} L ${cx+54*scale} ${cy+54*scale}
+               M ${cx-54*scale} ${cy+54*scale} L ${cx-36*scale} ${cy+36*scale}
+               M ${cx+36*scale} ${cy-36*scale} L ${cx+54*scale} ${cy-54*scale}`,
+             null, 'rgba(255,221,136,.75)', 5*scale);
+        break;
+      case 'eye':
+        path(`M ${20*scale} ${cy} C ${60*scale} ${28*scale}, ${180*scale} ${28*scale}, ${220*scale} ${cy} C ${180*scale} ${132*scale}, ${60*scale} ${132*scale}, ${20*scale} ${cy} Z`,
+             null, 'rgba(245,241,232,.9)', 4*scale);
+        circle(cx, cy, 34*scale, 'rgba(119,230,255,.75)');
+        circle(cx, cy, 14*scale, '#0a0612');
+        circle(cx-14*scale, cy-14*scale, 6*scale, 'rgba(255,255,255,.72)');
+        break;
+      case 'lantern':
+        path(`M ${78*scale} ${46*scale} L ${122*scale} ${46*scale}`, null, 'rgba(245,241,232,.6)', 6*scale);
+        path(`M ${70*scale} ${56*scale} H ${130*scale} V ${128*scale} A 30 30 0 0 1 ${70*scale} ${128*scale} Z`,
+             null, 'rgba(245,241,232,.8)', 5*scale);
+        circle(cx, cy+4*scale, 18*scale, 'rgba(255,220,130,.85)');
+        break;
+      case 'water':
+        path(`M ${42*scale} ${120*scale} Q ${70*scale} ${100*scale} ${98*scale} ${120*scale} T ${154*scale} ${120*scale}`,
+             null, 'rgba(245,241,232,.76)', 6*scale);
+        path(`M ${42*scale} ${94*scale} Q ${70*scale} ${74*scale} ${98*scale} ${94*scale} T ${154*scale} ${94*scale}`,
+             null, 'rgba(245,241,232,.52)', 5*scale);
+        path(`M ${92*scale} ${50*scale} C ${92*scale} ${50*scale} ${72*scale} ${82*scale} ${72*scale} ${98*scale} C ${72*scale} ${114*scale} ${84*scale} ${126*scale} ${100*scale} ${126*scale} S ${128*scale} ${114*scale} ${128*scale} ${98*scale} C ${128*scale} ${82*scale} ${108*scale} ${50*scale} ${108*scale} ${50*scale} Z`,
+             'rgba(119,230,255,.78)');
+        break;
+      case 'flame':
+        path(`M ${100*scale} ${34*scale} C ${118*scale} ${64*scale} ${142*scale} ${82*scale} ${142*scale} ${112*scale} C ${142*scale} ${140*scale} ${122*scale} ${160*scale} ${100*scale} ${160*scale} C ${74*scale} ${160*scale} ${58*scale} ${140*scale} ${58*scale} ${116*scale} C ${58*scale} ${92*scale} ${70*scale} ${78*scale} ${84*scale} ${64*scale} C ${86*scale} ${84*scale} ${102*scale} ${88*scale} ${108*scale} ${100*scale} C ${114*scale} ${90*scale} ${118*scale} ${72*scale} ${100*scale} ${34*scale} Z`,
+             'rgba(255,160,100,.86)');
+        path(`M ${96*scale} ${88*scale} C ${110*scale} ${106*scale} ${114*scale} ${116*scale} ${114*scale} ${126*scale} C ${114*scale} ${138*scale} ${106*scale} ${146*scale} ${96*scale} ${146*scale} C ${84*scale} ${146*scale} ${78*scale} ${136*scale} ${78*scale} ${126*scale} C ${78*scale} ${116*scale} ${82*scale} ${106*scale} ${96*scale} ${88*scale} Z`,
+             'rgba(255,221,136,.9)');
+        break;
+      case 'phoenix':
+        path(`M ${110*scale} ${34*scale} C ${126*scale} ${62*scale} ${154*scale} ${72*scale} ${168*scale} ${104*scale} C ${146*scale} ${98*scale} ${128*scale} ${104*scale} ${116*scale} ${118*scale} C ${102*scale} ${104*scale} ${84*scale} ${98*scale} ${56*scale} ${102*scale} C ${72*scale} ${78*scale} ${92*scale} ${64*scale} ${110*scale} ${34*scale} Z`,
+             'rgba(255,160,98,.84)');
+        path(`M ${58*scale} ${124*scale} C ${86*scale} ${118*scale} ${96*scale} ${132*scale} ${110*scale} ${156*scale} C ${124*scale} ${132*scale} ${136*scale} ${118*scale} ${162*scale} ${124*scale} C ${148*scale} ${138*scale} ${134*scale} ${154*scale} ${110*scale} ${170*scale} C ${86*scale} ${154*scale} ${72*scale} ${140*scale} ${58*scale} ${124*scale} Z`,
+             'rgba(245,241,232,.76)');
+        break;
+      case 'path':
+        circle(cx, 52*scale, 22*scale, 'rgba(245,241,232,.8)');
+        path(`M ${36*scale} ${170*scale} C ${56*scale} ${130*scale} ${68*scale} ${106*scale} ${100*scale} ${72*scale} C ${132*scale} ${106*scale} ${144*scale} ${130*scale} ${164*scale} ${170*scale}`,
+             null, 'rgba(245,241,232,.72)', 10*scale);
+        break;
+      case 'hands':
+        path(`M ${68*scale} ${146*scale} C ${74*scale} ${120*scale} ${82*scale} ${98*scale} ${100*scale} ${88*scale} C ${118*scale} ${98*scale} ${126*scale} ${120*scale} ${132*scale} ${146*scale}`,
+             null, 'rgba(245,241,232,.82)', 8*scale);
+        circle(cx, 74*scale, 22*scale, 'rgba(119,230,255,.72)');
+        circle(cx+24*scale, 64*scale, 6*scale, 'rgba(255,255,255,.62)');
+        break;
+      case 'bloom':
+        circle(cx, cy, 12*scale, 'rgba(255,221,136,.92)');
+        ctx.fillStyle = 'rgba(255,141,189,.72)';
+        [[0,-38,18,28],[0,38,18,28],[-38,0,28,18],[38,0,28,18]].forEach(([dx,dy,rx,ry]) => {
+          ctx.beginPath();
+          ctx.ellipse(cx + dx*scale, cy + dy*scale, rx*scale, ry*scale, 0, 0, Math.PI*2);
+          ctx.fill();
+        });
+        break;
+      case 'pillar':
+        ctx.fillStyle='rgba(245,241,232,.78)';
+        roundRect(ctx, 56*scale, 54*scale, 34*scale, 90*scale, 6*scale); ctx.fill();
+        roundRect(ctx, 130*scale, 54*scale, 34*scale, 90*scale, 6*scale); ctx.fill();
+        ctx.fillStyle='rgba(245,241,232,.58)';
+        roundRect(ctx, 48*scale, 42*scale, 50*scale, 10*scale, 4*scale); ctx.fill();
+        roundRect(ctx, 122*scale, 42*scale, 50*scale, 10*scale, 4*scale); ctx.fill();
+        break;
+      case 'star':
+      default:
+        circle(cx, cy, 72*scale, null, 'rgba(245,241,232,.14)', 2*scale);
+        path(`M ${100*scale} ${28*scale} L ${112*scale} ${72*scale} L ${156*scale} ${84*scale} L ${118*scale} ${108*scale} L ${128*scale} ${152*scale} L ${100*scale} ${126*scale} L ${72*scale} ${152*scale} L ${82*scale} ${108*scale} L ${44*scale} ${84*scale} L ${88*scale} ${72*scale} Z`,
+             'rgba(245,241,232,.82)');
+        break;
+    }
+    ctx.restore();
+  }
+
+  async function buildReadingImageBlob(){
+    if(!currentCard || !currentExtras) return null;
+    const W = 1080, H = 1350;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    const serif = '"Baskerville","Iowan Old Style","Palatino Linotype",Georgia,serif';
+    const sans = '-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif';
+    const shareLead = getShareLeadLine();
+
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#090610');
+    bg.addColorStop(0.52,'#130d20');
+    bg.addColorStop(1,'#08050f');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Slightly larger story card so mobile reading feels easier
+    const cardW = 788, cardH = 1112, cardX = (W-cardW)/2, cardY = 104;
+    const radius = 40;
+    const grad = ctx.createLinearGradient(cardX,cardY,cardX,cardY+cardH);
+    grad.addColorStop(0,'#100a18');
+    grad.addColorStop(.54,'#171027');
+    grad.addColorStop(1,'#0b0712');
+    ctx.fillStyle = grad;
+    roundRect(ctx, cardX, cardY, cardW, cardH, radius); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(232,207,151,.30)';
+    ctx.lineWidth = 2;
+    roundRect(ctx, cardX+1, cardY+1, cardW-2, cardH-2, radius-1); ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(232,207,151,.085)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, cardX+18, cardY+18, cardW-36, cardH-36, radius-14); ctx.stroke();
+
+    // quieter brand signature
+    ctx.textAlign='right';
+    ctx.fillStyle='rgba(245,241,232,.055)';
+    ctx.font = `500 16px ${sans}`;
+    ctx.fillText('TikTok Shop', cardX+cardW-30, cardY+32);
+    ctx.fillStyle='rgba(245,241,232,.12)';
+    ctx.font = `600 18px ${sans}`;
+    ctx.fillText('TALISMAN TOUCH', cardX+cardW-30, cardY+52);
+
+    // sigil zone
+    const orbX = W/2, orbY = cardY+254, orbR = 86;
+    const halo = ctx.createRadialGradient(orbX,orbY,8,orbX,orbY,orbR+82);
+    halo.addColorStop(0,'rgba(255,251,242,.13)');
+    halo.addColorStop(.38,'rgba(124,92,255,.15)');
+    halo.addColorStop(1,'rgba(124,92,255,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(orbX,orbY,orbR+70,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle='rgba(255,251,242,.04)';
+    ctx.beginPath(); ctx.arc(orbX,orbY,orbR,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(232,207,151,.22)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(orbX,orbY,orbR,0,Math.PI*2); ctx.stroke();
+    drawTarotSymbol(ctx, orbX-orbR*.78, orbY-orbR*.78, orbR*1.56, orbR*1.56, currentCard.art);
+
+    ctx.textAlign='center';
+
+    // lighter subtitle
+    ctx.fillStyle = 'rgba(236,215,170,.56)';
+    ctx.font = `600 26px ${serif}`;
+    let y = cardY + 432;
+    const nameLines = wrapLines(ctx, currentCard.name, 400, 2);
+    y = drawCenteredLines(ctx, nameLines, W/2, y, 30);
+
+    // hero line: a touch more artistic, but still easy to read on phones
+    y += 42;
+    ctx.fillStyle = 'rgba(246,234,208,.97)';
+    ctx.font = `italic 600 56px ${serif}`;
+    const leadLines = wrapLines(ctx, shareLead, 510, 5);
+    y = drawCenteredLines(ctx, leadLines, W/2, y, 62);
+
+    // breathing room divider
+    const dividerY = y + 36;
+    const divider = ctx.createLinearGradient(cardX+170, dividerY, cardX+cardW-170, dividerY);
+    divider.addColorStop(0, 'rgba(232,207,151,0)');
+    divider.addColorStop(0.5, 'rgba(232,207,151,.13)');
+    divider.addColorStop(1, 'rgba(232,207,151,0)');
+    ctx.strokeStyle = divider;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cardX+170, dividerY);
+    ctx.lineTo(cardX+cardW-170, dividerY);
+    ctx.stroke();
+
+    // larger, more legible mobile-friendly meta chips
+    const metaY = cardY + 780;
+    const chipW = 216;
+    const chipH = 88;
+    const chipGap = 98;
+    const leftX = W/2 - chipGap/2 - chipW;
+    const rightX = W/2 + chipGap/2;
+
+    function drawLightMeta(x, label, value){
+      ctx.fillStyle='rgba(255,255,255,.024)';
+      roundRect(ctx, x, metaY, chipW, chipH, 18); ctx.fill();
+      ctx.strokeStyle='rgba(232,207,151,.065)';
+      ctx.lineWidth=1;
+      roundRect(ctx, x+1, metaY+1, chipW-2, chipH-2, 18); ctx.stroke();
+
+      ctx.textAlign='center';
+      ctx.fillStyle='rgba(245,241,232,.24)';
+      ctx.font = `600 12px ${sans}`;
+      ctx.fillText(label.toUpperCase(), x + chipW/2, metaY + 26);
+
+      ctx.fillStyle='#e8cf97';
+      ctx.font = `500 27px ${serif}`;
+      const vals = wrapLines(ctx, value, 160, 2);
+      drawCenteredLines(ctx, vals, x + chipW/2, metaY + 56, 28);
+    }
+
+    drawLightMeta(leftX,'Direction', currentExtras.direction);
+    drawLightMeta(rightX,'Best window', currentExtras.time);
+
+    // subtle footer mark
+    const footerY = cardY + cardH - 72;
+    ctx.fillStyle = 'rgba(245,241,232,.09)';
+    ctx.font = `500 14px ${sans}`;
+    ctx.textAlign = 'center';
+    ctx.fillText('talisman touch', W/2, footerY);
+
+    const sigilY = cardY + cardH - 108;
+    ctx.globalAlpha = 0.12;
+    drawTarotSymbol(ctx, W/2 - 18, sigilY - 18, 36, 36, 'eye');
+    ctx.globalAlpha = 1;
+
+    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  }
+
+  async function saveReadingImage(){
+    try{
+      const blob = await buildReadingImageBlob();
+      if(!blob) return;
+
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+      const canUseFileShare = typeof File !== 'undefined' && navigator.share && navigator.canShare;
+
+      if(isMobile && canUseFileShare){
+        const file = new File([blob], 'guardian-eye-sign.png', {type:'image/png'});
+        if(navigator.canShare({files:[file]})){
+          await navigator.share({files:[file], title:'Today\'s sign'});
+          return;
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+
+      // Desktop-friendly fallback: open a preview tab and trigger a download.
+      if(!isMobile){
+        const previewWin = window.open('', '_blank', 'noopener');
+        if(previewWin){
+          previewWin.document.write(`<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your sign</title>
+<style>
+  html,body{margin:0;background:#090610;color:#f5f1e8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif}
+  .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px}
+  img{max-width:min(92vw,540px);height:auto;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;
+    background:linear-gradient(180deg,#f0d296 0%,#c99d51 100%);color:#130f08;text-decoration:none;font-weight:800;
+    letter-spacing:.08em;text-transform:uppercase}
+  p{margin:0;color:rgba(245,241,232,.7);font-size:14px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <img src="${url}" alt="Your sign">
+    <a href="${url}" download="guardian-eye-sign.png">Download sign</a>
+    <p>Desktop preview fallback</p>
+  </div>
+</body>
+</html>`);
+          previewWin.document.close();
+        }
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'guardian-eye-sign.png';
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(()=>URL.revokeObjectURL(url), 15000);
+        return;
+      }
+
+      // Mobile browser fallback when file share is unavailable.
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'guardian-eye-sign.png';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => {
+        const fallbackWin = window.open(url, '_blank');
+        if(!fallbackWin){
+          window.location.href = url;
+        }
+      }, 80);
+
+      setTimeout(()=>URL.revokeObjectURL(url), 8000);
+    }catch(err){
+      console.error('Save sign failed:', err);
+      if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+      if(!isMobile){
+        alert('Could not save the sign on this browser. Please try Safari or Chrome on your phone.');
+      }
+    }
+  }
+
+
+  function pickCard(){
+    return weightedPick(tarotCards.slice());
+  }
+
+  function renderCard(card){
+    currentExtras = buildReadingExtras(card);
+    $('cardName').textContent = card.name;
+    $('cardGuidance').textContent = card.guidance;
+    $('cardAction').innerHTML = `<span>Direction</span> ${currentExtras.direction} <em>·</em> <span>Best window</span> ${currentExtras.time}`;
+    $('cardTag').textContent = 'DRAWN SIGN';
+    renderArt(card.art);
+  }
+
+  function renderArt(type){
+    const art = $('cardArt');
+    const colorMap = {
+      star:['rgba(119,230,255,.18)','rgba(124,92,255,.22)'],
+      moon:['rgba(180,168,255,.2)','rgba(110,88,202,.22)'],
+      sun:['rgba(255,205,109,.22)','rgba(255,153,84,.18)'],
+      eye:['rgba(119,230,255,.24)','rgba(213,179,106,.22)'],
+      lantern:['rgba(255,214,120,.18)','rgba(124,92,255,.18)'],
+      water:['rgba(119,230,255,.2)','rgba(130,180,255,.2)'],
+      flame:['rgba(255,141,189,.18)','rgba(255,174,79,.18)'],
+      phoenix:['rgba(255,150,88,.2)','rgba(124,92,255,.15)']
+    };
+    const colors = colorMap[type] || ['rgba(124,92,255,.18)','rgba(119,230,255,.14)'];
+    art.style.setProperty('--art2', colors[0]);
+    let svg = '';
+    switch(type){
+      case 'star':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(245,241,232,.14)"/>
+          <path d="M100 28 L112 72 L156 84 L118 108 L128 152 L100 126 L72 152 L82 108 L44 84 L88 72 Z" fill="rgba(245,241,232,.82)" />
+        </svg>`; break;
+      case 'moon':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="90" cy="92" r="52" fill="rgba(245,241,232,.82)"/>
+          <circle cx="112" cy="84" r="52" fill="#171127"/>
+          <circle cx="142" cy="54" r="6" fill="rgba(245,241,232,.6)"/>
+          <circle cx="56" cy="144" r="4" fill="rgba(245,241,232,.45)"/>
+        </svg>`; break;
+      case 'sun':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="38" fill="rgba(255,221,136,.9)"/>
+          <g stroke="rgba(255,221,136,.75)" stroke-width="5" stroke-linecap="round">
+            <path d="M100 24v24M100 152v24M24 100h24M152 100h24M44 44l18 18M138 138l18 18M44 156l18-18M138 62l18-18"/>
+          </g>
+        </svg>`; break;
+      case 'eye':
+        svg = `<svg viewBox="0 0 240 160" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 80 C60 28, 180 28, 220 80 C180 132, 60 132, 20 80 Z" fill="none" stroke="rgba(245,241,232,.9)" stroke-width="4"/>
+          <circle cx="120" cy="80" r="34" fill="rgba(119,230,255,.75)"/>
+          <circle cx="120" cy="80" r="14" fill="#0a0612"/>
+          <circle cx="106" cy="66" r="6" fill="rgba(255,255,255,.72)"/>
+        </svg>`; break;
+      case 'lantern':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M78 46h44" stroke="rgba(245,241,232,.6)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M70 56h60v72a30 30 0 0 1-60 0z" fill="none" stroke="rgba(245,241,232,.8)" stroke-width="5"/>
+          <circle cx="100" cy="104" r="18" fill="rgba(255,220,130,.85)"/>
+        </svg>`; break;
+      case 'water':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M42 120 Q70 100 98 120 T154 120" fill="none" stroke="rgba(245,241,232,.76)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M42 94 Q70 74 98 94 T154 94" fill="none" stroke="rgba(245,241,232,.52)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M92 50 C92 50 72 82 72 98 C72 114 84 126 100 126 S128 114 128 98 C128 82 108 50 108 50 Z" fill="rgba(119,230,255,.78)"/>
+        </svg>`; break;
+      case 'flame':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100 34 C118 64 142 82 142 112 C142 140 122 160 100 160 C74 160 58 140 58 116 C58 92 70 78 84 64 C86 84 102 88 108 100 C114 90 118 72 100 34 Z" fill="rgba(255,160,100,.86)"/>
+          <path d="M96 88 C110 106 114 116 114 126 C114 138 106 146 96 146 C84 146 78 136 78 126 C78 116 82 106 96 88 Z" fill="rgba(255,221,136,.9)"/>
+        </svg>`; break;
+      case 'phoenix':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M110 34 C126 62 154 72 168 104 C146 98 128 104 116 118 C102 104 84 98 56 102 C72 78 92 64 110 34 Z" fill="rgba(255,160,98,.84)"/>
+          <path d="M58 124 C86 118 96 132 110 156 C124 132 136 118 162 124 C148 138 134 154 110 170 C86 154 72 140 58 124 Z" fill="rgba(245,241,232,.76)"/>
+        </svg>`; break;
+      case 'path':
+        svg = `<svg viewBox="0 0 200 200" width="90%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="52" r="22" fill="rgba(245,241,232,.8)"/>
+          <path d="M36 170 C56 130 68 106 100 72 C132 106 144 130 164 170" fill="none" stroke="rgba(245,241,232,.72)" stroke-width="10" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'hands':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M68 146 C74 120 82 98 100 88 C118 98 126 120 132 146" fill="none" stroke="rgba(245,241,232,.82)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="100" cy="74" r="22" fill="rgba(119,230,255,.72)"/>
+          <circle cx="124" cy="64" r="6" fill="rgba(255,255,255,.62)"/>
+        </svg>`; break;
+      case 'bloom':
+        svg = `<svg viewBox="0 0 200 200" width="88%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="12" fill="rgba(255,221,136,.92)"/>
+          <g fill="rgba(255,141,189,.72)">
+            <ellipse cx="100" cy="62" rx="18" ry="28"/>
+            <ellipse cx="100" cy="138" rx="18" ry="28"/>
+            <ellipse cx="62" cy="100" rx="28" ry="18"/>
+            <ellipse cx="138" cy="100" rx="28" ry="18"/>
+          </g>
+        </svg>`; break;
+      case 'pillar':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="56" y="54" width="34" height="90" rx="6" fill="rgba(245,241,232,.78)"/>
+          <rect x="130" y="54" width="34" height="90" rx="6" fill="rgba(245,241,232,.78)"/>
+          <rect x="48" y="42" width="50" height="10" rx="4" fill="rgba(245,241,232,.58)"/>
+          <rect x="122" y="42" width="50" height="10" rx="4" fill="rgba(245,241,232,.58)"/>
+        </svg>`; break;
+      case 'temple':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M42 86 L110 44 L178 86 Z" fill="rgba(245,241,232,.78)"/>
+          <rect x="54" y="86" width="14" height="48" fill="rgba(245,241,232,.62)"/>
+          <rect x="84" y="86" width="14" height="48" fill="rgba(245,241,232,.62)"/>
+          <rect x="122" y="86" width="14" height="48" fill="rgba(245,241,232,.62)"/>
+          <rect x="152" y="86" width="14" height="48" fill="rgba(245,241,232,.62)"/>
+        </svg>`; break;
+      case 'twin':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="82" cy="82" r="24" fill="rgba(255,141,189,.78)"/>
+          <circle cx="138" cy="82" r="24" fill="rgba(119,230,255,.78)"/>
+          <path d="M82 110 C82 130 94 144 110 154 C126 144 138 130 138 110" fill="none" stroke="rgba(245,241,232,.74)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'starpath':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M34 156 C74 128 96 112 110 82 C124 112 146 128 186 156" fill="none" stroke="rgba(245,241,232,.78)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M110 30 L118 54 L142 62 L118 70 L110 94 L102 70 L78 62 L102 54 Z" fill="rgba(255,221,136,.86)"/>
+        </svg>`; break;
+      case 'lion':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="110" cy="98" r="42" fill="rgba(255,190,100,.82)"/>
+          <circle cx="110" cy="98" r="24" fill="rgba(245,241,232,.86)"/>
+          <circle cx="100" cy="94" r="4" fill="#111"/><circle cx="120" cy="94" r="4" fill="#111"/>
+          <path d="M100 112 Q110 118 120 112" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'wheel':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="110" cy="100" r="54" fill="none" stroke="rgba(245,241,232,.82)" stroke-width="6"/>
+          <circle cx="110" cy="100" r="18" fill="none" stroke="rgba(245,241,232,.62)" stroke-width="4"/>
+          <path d="M110 46V154M56 100H164M74 64L146 136M146 64L74 136" stroke="rgba(245,241,232,.55)" stroke-width="4"/>
+        </svg>`; break;
+      case 'scales':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M110 42v104" stroke="rgba(245,241,232,.8)" stroke-width="6"/>
+          <path d="M68 72h84" stroke="rgba(245,241,232,.76)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M78 72 L56 114 H100 Z" fill="rgba(119,230,255,.62)"/>
+          <path d="M142 72 L120 114 H164 Z" fill="rgba(255,141,189,.62)"/>
+        </svg>`; break;
+      case 'halo':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="110" cy="80" r="32" fill="none" stroke="rgba(245,241,232,.84)" stroke-width="6"/>
+          <path d="M110 112 v44" stroke="rgba(245,241,232,.62)" stroke-width="6" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'lightning':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M118 28 L88 96 H116 L100 170 L148 94 H122 Z" fill="rgba(255,221,136,.9)"/>
+          <path d="M62 154 h96" stroke="rgba(245,241,232,.4)" stroke-width="5" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'crescent':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="106" cy="96" r="44" fill="rgba(245,241,232,.9)"/>
+          <circle cx="124" cy="88" r="44" fill="#19122c"/>
+          <circle cx="156" cy="58" r="5" fill="rgba(245,241,232,.55)"/>
+          <circle cx="62" cy="138" r="3.6" fill="rgba(245,241,232,.42)"/>
+        </svg>`; break;
+      case 'trumpet':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M72 90 L132 70 L132 130 L72 110 Z" fill="rgba(245,241,232,.82)"/>
+          <rect x="58" y="94" width="18" height="12" rx="4" fill="rgba(245,241,232,.62)"/>
+          <path d="M140 80 Q166 92 182 92" stroke="rgba(255,221,136,.72)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M140 100 Q170 112 188 112" stroke="rgba(255,221,136,.58)" stroke-width="4" stroke-linecap="round"/>
+        </svg>`; break;
+      case 'orbit':
+        svg = `<svg viewBox="0 0 220 200" width="92%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="110" cy="100" r="24" fill="rgba(119,230,255,.78)"/>
+          <ellipse cx="110" cy="100" rx="70" ry="30" fill="none" stroke="rgba(245,241,232,.72)" stroke-width="4"/>
+          <ellipse cx="110" cy="100" rx="30" ry="70" fill="none" stroke="rgba(245,241,232,.46)" stroke-width="4"/>
+        </svg>`; break;
+      default:
+        svg = '';
+    }
+    art.innerHTML = svg;
+  }
+
+  function finishReading(){
+    if(!currentCard) return;
+    const heroHome = document.querySelector('.hero-home');
+    if(heroHome){
+      heroHome.classList.remove('prelude-mode');
+      heroHome.classList.add('stage-hidden');
+    }
+
+    const today = todayKey();
+    state.lastReadDate = today;
+    state.awakeningCount = (state.awakeningCount || 0) + 1;
+    state.readings.push({
+      date: today,
+      mood: selectedMood,
+      text: selectedText || '',
+      cardId: currentCard.id
+    });
+    saveState();
+    updateBadges();
+
+    const cardStage = $('cardStage');
+    const resultStage = $('resultStage');
+
+    if(cardStage) cardStage.classList.add('closing');
+
+    if(navigator.vibrate){
+      navigator.vibrate([36, 40, 56]);
+    }
+
+    setTimeout(() => {
+      if(cardStage){
+        cardStage.classList.remove('active');
+        cardStage.classList.remove('closing');
+      }
+      if(resultStage) resultStage.classList.add('active');
+      renderResultCard(currentCard);
+    }, 420);
+  }
+
+  function resetToHome(alreadyRead){
+    if(preludeAutoTimer){ clearTimeout(preludeAutoTimer); preludeAutoTimer = null; }
+    try{ window.scrollTo({top:0, left:0, behavior:'auto'}); }catch(err){ window.scrollTo(0,0); }
+    if(document.scrollingElement) document.scrollingElement.scrollTop = 0;
+    const heroHome = document.querySelector('.hero-home');
+    if(heroHome){
+      heroHome.classList.remove('stage-hidden');
+      heroHome.classList.remove('prelude-mode');
+      heroHome.classList.remove('home-transitioning');
+    }
+    $('cardStage').classList.remove('active');
+    $('resultStage').classList.remove('active');
+    $('preludePanel').classList.remove('active');
+    $('homePanel').classList.add('active');
+    $('tarotCard').classList.remove('reveal');
+    $('tarotCard').classList.add('float');
+    $('eyeWrap').classList.remove('blink');
+    $('eyeWrap').classList.remove('eye-looping');
+    $('eyeSvg').classList.remove('eye-closed');
+    if(typeof speechRecognition !== 'undefined' && typeof speechListening !== 'undefined' && speechRecognition && speechListening){ try{ speechRecognition.stop(); }catch(err){} }
+    selectedMood = null;
+    selectedText = '';
+    currentMoodLine = '';
+    const mindText = $('mindText');
+    if(mindText){
+      mindText.value = '';
+      mindText.disabled = false;
+    }
+    syncHomeSelectionUI();
+    setHomeQuestion(alreadyRead);
+    setTimeout(() => $('eyeWrap').classList.add('eye-looping'), 980);
+    if(alreadyRead) showDailyLimit();
+  }
+
+  function protectPage(){
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('dragstart', e => e.preventDefault());
+    let pressTimer = null;
+    document.addEventListener('touchstart', () => {
+      pressTimer = setTimeout(()=>{}, 700);
+    }, {passive:true});
+    document.addEventListener('touchend', () => clearTimeout(pressTimer), {passive:true});
+  }
+
+  // Ambient music via WebAudio, no external asset
+  function setupAudio(){
+    if(audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    gainMaster = audioCtx.createGain();
+    gainMaster.gain.value = 0.0001;
+    gainMaster.connect(audioCtx.destination);
+  }
+
+  function tone(freq, start, duration, type='sine', gain=0.018){
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.linearRampToValueAtTime(gain, start + 0.3);
+    g.gain.linearRampToValueAtTime(0.0001, start + duration);
+    osc.connect(g).connect(gainMaster);
+    osc.start(start);
+    osc.stop(start + duration + 0.05);
+  }
+
+  function playAmbientLoop(){
+    if(!musicOn || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    const root = [174.61, 196.00, 220.00, 261.63][Math.floor(Math.random()*4)];
+    const chord = [root, root*1.25, root*1.5, root*2];
+    tone(chord[0], now+0.0, 5.5, 'sine', 0.012);
+    tone(chord[1], now+0.8, 5.2, 'triangle', 0.010);
+    tone(chord[2], now+1.5, 4.6, 'sine', 0.008);
+    tone(chord[3], now+2.4, 3.7, 'triangle', 0.006);
+    musicTimer = setTimeout(playAmbientLoop, 5200);
+  }
+
+  async function startMusic(){
+    try{
+      setupAudio();
+      if(audioCtx.state === 'suspended') await audioCtx.resume();
+      musicOn = true;
+      $('musicBtn').classList.remove('hidden');
+      gainMaster.gain.cancelScheduledValues(audioCtx.currentTime);
+      gainMaster.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + 0.6);
+      if(!musicTimer) playAmbientLoop();
+    }catch(e){}
+  }
+
+  function stopMusic(){
+    if(!audioCtx || !gainMaster) return;
+    musicOn = false;
+    clearTimeout(musicTimer); musicTimer = null;
+    gainMaster.gain.cancelScheduledValues(audioCtx.currentTime);
+    gainMaster.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+  }
+
+  function toggleMusic(){
+    if(!audioCtx || !musicOn){
+      startMusic();
+      return;
+    }
+    stopMusic();
+  }
+})();
+</script>
+
+
+<div id="agent"></div></body><div id="ai-assist-root-bangs"></div><div id="shadow-root-ai-zhishiku"></div></html>
+<!-- homepage interaction refined -->
