@@ -1,0 +1,1133 @@
+{
+  "meta": {
+    "product": "Guardian Eye / Eye Sign",
+    "version": "content_library_curated_v5",
+    "language": "en-US",
+    "notes": [
+      "Designed for short-form guidance cards, results pages, and export/share cards.",
+      "Tone target: calm, mystical, feminine, screenshot-worthy, easy to understand.",
+      "Use quote as the primary share line. Use sign_name as a light label, not the main headline.",
+      "v2: 64 core card quotes manually tightened for stronger screenshot/share feel.",
+      "Round 2 human refinement: stronger screenshot-worthy main lines with higher emotional precision.",
+      "Round 3 art-direction pass: weakest names and lines tightened for stronger emotional precision and cleaner social-share feel.",
+      "V5: added high-hit priority 16 pool for blank/short inputs so early results skew stronger and prettier."
+    ]
+  },
+  "negative_types": [
+    {
+      "id": "pressure",
+      "label": "Pressure",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "overthinking",
+      "label": "Overthinking",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "self_doubt",
+      "label": "Self-doubt",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "exhaustion",
+      "label": "Exhaustion",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "loneliness",
+      "label": "Loneliness",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "anger",
+      "label": "Anger",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "avoidance",
+      "label": "Avoidance",
+      "prompt": "What would you like the Eye to take away?"
+    },
+    {
+      "id": "confusion",
+      "label": "Confusion",
+      "prompt": "What would you like the Eye to take away?"
+    }
+  ],
+  "target_intents": [
+    {
+      "id": "ground",
+      "label": "Steadier Ground",
+      "keywords": [
+        "calm",
+        "steady",
+        "ground",
+        "centered",
+        "settled",
+        "less anxious",
+        "stable"
+      ],
+      "default_best_hour": "9:00–11:00"
+    },
+    {
+      "id": "clarity",
+      "label": "Clarity",
+      "keywords": [
+        "clear",
+        "clarity",
+        "focus",
+        "truth",
+        "understand",
+        "answer",
+        "decision"
+      ],
+      "default_best_hour": "7:00–9:00"
+    },
+    {
+      "id": "rest",
+      "label": "Rest",
+      "keywords": [
+        "rest",
+        "sleep",
+        "slow down",
+        "recharge",
+        "peace",
+        "softness"
+      ],
+      "default_best_hour": "20:00–22:00"
+    },
+    {
+      "id": "self_trust",
+      "label": "Self-Trust",
+      "keywords": [
+        "confidence",
+        "trust myself",
+        "self trust",
+        "believe in myself",
+        "certainty",
+        "courage"
+      ],
+      "default_best_hour": "11:00–13:00"
+    },
+    {
+      "id": "connection",
+      "label": "Connection",
+      "keywords": [
+        "love",
+        "connection",
+        "friendship",
+        "open up",
+        "support",
+        "closeness"
+      ],
+      "default_best_hour": "17:00–19:00"
+    },
+    {
+      "id": "money",
+      "label": "Money Flow",
+      "keywords": [
+        "money",
+        "abundance",
+        "work",
+        "career",
+        "income",
+        "clients",
+        "business",
+        "prosperity"
+      ],
+      "default_best_hour": "14:00–16:00"
+    },
+    {
+      "id": "boundaries",
+      "label": "Boundaries",
+      "keywords": [
+        "boundary",
+        "protect my energy",
+        "say no",
+        "space",
+        "distance",
+        "respect"
+      ],
+      "default_best_hour": "13:00–15:00"
+    },
+    {
+      "id": "momentum",
+      "label": "Momentum",
+      "keywords": [
+        "move forward",
+        "discipline",
+        "motivation",
+        "action",
+        "progress",
+        "finish",
+        "start"
+      ],
+      "default_best_hour": "10:00–12:00"
+    }
+  ],
+  "generation_rules": {
+    "result_card_order": [
+      "sign_name",
+      "quote",
+      "today_move",
+      "best_hour"
+    ],
+    "export_card_order": [
+      "quote",
+      "sign_name",
+      "today_move",
+      "best_hour"
+    ],
+    "best_hour_display": "Best hour · {best_hour}",
+    "today_move_label": "TODAY'S MOVE",
+    "fallback_target_by_negative": {
+      "pressure": "ground",
+      "overthinking": "clarity",
+      "self_doubt": "self_trust",
+      "exhaustion": "rest",
+      "loneliness": "connection",
+      "anger": "boundaries",
+      "avoidance": "momentum",
+      "confusion": "clarity"
+    }
+  },
+  "cards": [
+    {
+      "id": "pressure__ground",
+      "negative_type": "pressure",
+      "target_intent": "ground",
+      "sign_name": "Steadier Ground",
+      "quote": "When the pressure gets specific, your body stops treating everything like danger.",
+      "today_move": "Choose one practical move.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Less pressure leaves more room for your real next step."
+    },
+    {
+      "id": "overthinking__ground",
+      "negative_type": "overthinking",
+      "target_intent": "ground",
+      "sign_name": "Quiet Weight",
+      "quote": "Your body is ready to settle before your thoughts are.",
+      "today_move": "Put both feet on the floor for one full minute.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A quieter body will tell you what your mind has been missing."
+    },
+    {
+      "id": "self_doubt__ground",
+      "negative_type": "self_doubt",
+      "target_intent": "ground",
+      "sign_name": "Gentle Balance",
+      "quote": "You do not need more proof to take up your place.",
+      "today_move": "Say one thing you know for sure.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not need more proof to stand where you already are."
+    },
+    {
+      "id": "exhaustion__ground",
+      "negative_type": "exhaustion",
+      "target_intent": "ground",
+      "sign_name": "Sacred Pause",
+      "quote": "Rest is not a delay. It is your system returning to itself.",
+      "today_move": "Cancel one nonessential thing tonight.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Rest is not falling behind. It is how your strength returns."
+    },
+    {
+      "id": "loneliness__ground",
+      "negative_type": "loneliness",
+      "target_intent": "ground",
+      "sign_name": "Held Center",
+      "quote": "You do not owe clarity before you feel steady.",
+      "today_move": "Text one safe person.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You are allowed to steady yourself before you explain yourself."
+    },
+    {
+      "id": "anger__ground",
+      "negative_type": "anger",
+      "target_intent": "ground",
+      "sign_name": "Cooling Field",
+      "quote": "The heat can leave without your strength leaving with it.",
+      "today_move": "Take one slow breath before you answer anything.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "What softens first is not your power. It is the heat around it."
+    },
+    {
+      "id": "avoidance__ground",
+      "negative_type": "avoidance",
+      "target_intent": "ground",
+      "sign_name": "Return to Center",
+      "quote": "One small move can calm more than another day of bracing.",
+      "today_move": "Start with the smallest unfinished detail.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "When you stop dodging the task, your nervous system stops running too."
+    },
+    {
+      "id": "confusion__ground",
+      "negative_type": "confusion",
+      "target_intent": "ground",
+      "sign_name": "Settled Signal",
+      "quote": "The right path often feels quieter than the panic around it.",
+      "today_move": "Drink water, then pick one simple next step.",
+      "best_hour": "9:00–11:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The path does not need to be loud to be true."
+    },
+    {
+      "id": "pressure__clarity",
+      "negative_type": "pressure",
+      "target_intent": "clarity",
+      "sign_name": "Clear Signal",
+      "quote": "Not everything in front of you deserves the same urgency.",
+      "today_move": "Write your next step in one sentence.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The pressure clears when you stop treating every task as equally urgent."
+    },
+    {
+      "id": "overthinking__clarity",
+      "negative_type": "overthinking",
+      "target_intent": "clarity",
+      "sign_name": "True Line",
+      "quote": "The answer gets easier to hear when the spiral gets quieter.",
+      "today_move": "Silence one distraction for ten minutes.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A quieter mind makes the right thing easier to hear."
+    },
+    {
+      "id": "self_doubt__clarity",
+      "negative_type": "self_doubt",
+      "target_intent": "clarity",
+      "sign_name": "Quiet Answer",
+      "quote": "Fear can sound convincing without being true.",
+      "today_move": "Name the real question, not the loud one.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Your voice gets clearer when it is not arguing with fear."
+    },
+    {
+      "id": "exhaustion__clarity",
+      "negative_type": "exhaustion",
+      "target_intent": "clarity",
+      "sign_name": "Lucid Rest",
+      "quote": "A tired mind turns everything into a harder question.",
+      "today_move": "Step away from the screen for a short reset.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Clarity often arrives after rest, not before it."
+    },
+    {
+      "id": "loneliness__clarity",
+      "negative_type": "loneliness",
+      "target_intent": "clarity",
+      "sign_name": "Open Lens",
+      "quote": "What feels impossible alone often becomes clear out loud.",
+      "today_move": "Tell one person what you actually need.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The truth becomes easier to name when you feel less alone."
+    },
+    {
+      "id": "anger__clarity",
+      "negative_type": "anger",
+      "target_intent": "clarity",
+      "sign_name": "Clean Fire",
+      "quote": "A clear answer will do more than a sharp reaction.",
+      "today_move": "Delay your reply until your body feels calm.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Clear sight is stronger than a sharp reaction."
+    },
+    {
+      "id": "avoidance__clarity",
+      "negative_type": "avoidance",
+      "target_intent": "clarity",
+      "sign_name": "Visible Thread",
+      "quote": "What you face becomes information. What you avoid becomes fog.",
+      "today_move": "Open the task you have been postponing.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "What you avoid gets blurrier. What you face gets simpler."
+    },
+    {
+      "id": "confusion__clarity",
+      "negative_type": "confusion",
+      "target_intent": "clarity",
+      "sign_name": "North Point",
+      "quote": "You already know more than panic is letting you trust.",
+      "today_move": "Choose one answer and follow it for one hour.",
+      "best_hour": "7:00–9:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You already know more than the noise is telling you."
+    },
+    {
+      "id": "pressure__rest",
+      "negative_type": "pressure",
+      "target_intent": "rest",
+      "sign_name": "Soft Return",
+      "quote": "You do not have to stay braced to stay responsible.",
+      "today_move": "Dim one light earlier tonight.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Even the urgent mind softens when it is finally allowed to land."
+    },
+    {
+      "id": "overthinking__rest",
+      "negative_type": "overthinking",
+      "target_intent": "rest",
+      "sign_name": "Night Mercy",
+      "quote": "Tonight does not need to become a courtroom in your head.",
+      "today_move": "Put your phone down ten minutes sooner.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not have to solve tonight to feel safe tonight."
+    },
+    {
+      "id": "self_doubt__rest",
+      "negative_type": "self_doubt",
+      "target_intent": "rest",
+      "sign_name": "Quiet Harbor",
+      "quote": "Rest first. The real answer will still be there tomorrow.",
+      "today_move": "Lie down without trying to be productive.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Rest makes room for a steadier yes tomorrow."
+    },
+    {
+      "id": "exhaustion__rest",
+      "negative_type": "exhaustion",
+      "target_intent": "rest",
+      "sign_name": "Deep Exhale",
+      "quote": "Your body has been asking you to stop more gently than your thoughts have.",
+      "today_move": "Take a warm shower or wash your face slowly.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Your body has been asking more gently than your thoughts."
+    },
+    {
+      "id": "loneliness__rest",
+      "negative_type": "loneliness",
+      "target_intent": "rest",
+      "sign_name": "Warm Shelter",
+      "quote": "Rest lands more easily when you stop bracing alone.",
+      "today_move": "Send one simple goodnight text.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Rest is easier to receive when you let someone be near the edge of it."
+    },
+    {
+      "id": "anger__rest",
+      "negative_type": "anger",
+      "target_intent": "rest",
+      "sign_name": "Cooling Ember",
+      "quote": "A slower pace will protect more than a harsher tone tonight.",
+      "today_move": "Unclench your shoulders before the next thing.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A softer pace protects more than a harsh reaction does."
+    },
+    {
+      "id": "avoidance__rest",
+      "negative_type": "avoidance",
+      "target_intent": "rest",
+      "sign_name": "Unclenched Jaw",
+      "quote": "The task can wait longer than your nervous system should have to.",
+      "today_move": "Leave one task unfinished on purpose.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The task will still be there. Your nervous system does not have to stay on duty."
+    },
+    {
+      "id": "confusion__rest",
+      "negative_type": "confusion",
+      "target_intent": "rest",
+      "sign_name": "Still Water",
+      "quote": "You are not failing. You are flooded.",
+      "today_move": "Lower the volume around you.",
+      "best_hour": "20:00–22:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You are not behind. You are overloaded."
+    },
+    {
+      "id": "pressure__self_trust",
+      "negative_type": "pressure",
+      "target_intent": "self_trust",
+      "sign_name": "Inner Proof",
+      "quote": "Pressure sounds urgent. It does not know you better than you do.",
+      "today_move": "Back one decision you already made.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not need more pressure to become more convincing."
+    },
+    {
+      "id": "overthinking__self_trust",
+      "negative_type": "overthinking",
+      "target_intent": "self_trust",
+      "sign_name": "Sacred Backbone",
+      "quote": "You do not need one more loop to know what matters.",
+      "today_move": "Write down one thing you were right about.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You already know what deserves your attention."
+    },
+    {
+      "id": "self_doubt__self_trust",
+      "negative_type": "self_doubt",
+      "target_intent": "self_trust",
+      "sign_name": "Quiet Knowing",
+      "quote": "Self-trust begins where extra reassurance stops running the show.",
+      "today_move": "Choose without asking for extra reassurance.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Self-trust grows when you stop outsourcing every answer."
+    },
+    {
+      "id": "exhaustion__self_trust",
+      "negative_type": "exhaustion",
+      "target_intent": "self_trust",
+      "sign_name": "Steady Voice",
+      "quote": "Your body has been telling the truth long before your mind agreed.",
+      "today_move": "Protect one hour for yourself.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Your body knows the cost of pushing past its own no."
+    },
+    {
+      "id": "loneliness__self_trust",
+      "negative_type": "loneliness",
+      "target_intent": "self_trust",
+      "sign_name": "Honest Bond",
+      "quote": "The right people will not make honesty feel unsafe.",
+      "today_move": "Say what you mean in one short message.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The right connection will not punish your honesty."
+    },
+    {
+      "id": "anger__self_trust",
+      "negative_type": "anger",
+      "target_intent": "self_trust",
+      "sign_name": "Clear Flame",
+      "quote": "You do not need volume to prove what is true.",
+      "today_move": "Lower your voice instead of raising it.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Strength is clearer than anger today."
+    },
+    {
+      "id": "avoidance__self_trust",
+      "negative_type": "avoidance",
+      "target_intent": "self_trust",
+      "sign_name": "Trusted Hand",
+      "quote": "Confidence grows the moment your hand touches the thing.",
+      "today_move": "Begin before you feel fully ready.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Confidence grows when you touch the task instead of circling it."
+    },
+    {
+      "id": "confusion__self_trust",
+      "negative_type": "confusion",
+      "target_intent": "self_trust",
+      "sign_name": "Sure Step",
+      "quote": "A calm choice deserves more trust than a dramatic one.",
+      "today_move": "Take the next step without rewriting it three times.",
+      "best_hour": "11:00–13:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You can trust a calm decision more than a dramatic one."
+    },
+    {
+      "id": "pressure__connection",
+      "negative_type": "pressure",
+      "target_intent": "connection",
+      "sign_name": "Open Thread",
+      "quote": "Pressure makes closeness feel expensive. Softness makes it possible again.",
+      "today_move": "Ask for help in one sentence.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Connection feels safer when pressure is not leading the room."
+    },
+    {
+      "id": "overthinking__connection",
+      "negative_type": "overthinking",
+      "target_intent": "connection",
+      "sign_name": "Plain Signal",
+      "quote": "You do not have to explain yourself perfectly to be understood.",
+      "today_move": "Reply to one person without overediting.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not have to explain every thought to be understood."
+    },
+    {
+      "id": "self_doubt__connection",
+      "negative_type": "self_doubt",
+      "target_intent": "connection",
+      "sign_name": "Warm Return",
+      "quote": "Being seen begins the moment you stop overediting yourself.",
+      "today_move": "Share one honest feeling with someone safe.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Being seen starts with showing up as you are."
+    },
+    {
+      "id": "exhaustion__connection",
+      "negative_type": "exhaustion",
+      "target_intent": "connection",
+      "sign_name": "Soft Reach",
+      "quote": "Closeness feels possible again when your body is not in survival mode.",
+      "today_move": "Send a soft check-in text.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Softness is easier to feel when your body is not running on empty."
+    },
+    {
+      "id": "loneliness__connection",
+      "negative_type": "loneliness",
+      "target_intent": "connection",
+      "sign_name": "Shared Light",
+      "quote": "One honest reach can change the whole temperature of a day.",
+      "today_move": "Invite one small conversation.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "One honest reach can change the shape of a whole day."
+    },
+    {
+      "id": "anger__connection",
+      "negative_type": "anger",
+      "target_intent": "connection",
+      "sign_name": "Gentle Tongue",
+      "quote": "Speak from the hurt underneath, not the heat on top.",
+      "today_move": "Use fewer sharp words today.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Speak from the wound less, from the truth more."
+    },
+    {
+      "id": "avoidance__connection",
+      "negative_type": "avoidance",
+      "target_intent": "connection",
+      "sign_name": "Bridge Line",
+      "quote": "Reaching out ends more spirals than disappearing ever does.",
+      "today_move": "Answer the message you have been postponing.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Reaching out ends more spirals than avoiding ever does."
+    },
+    {
+      "id": "confusion__connection",
+      "negative_type": "confusion",
+      "target_intent": "connection",
+      "sign_name": "True Nearness",
+      "quote": "The right person does not need your polished version to stay.",
+      "today_move": "Sit near someone you trust.",
+      "best_hour": "17:00–19:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "The right person does not need a perfect version of you."
+    },
+    {
+      "id": "pressure__money",
+      "negative_type": "pressure",
+      "target_intent": "money",
+      "sign_name": "Steady Ledger",
+      "quote": "Money gets clearer the moment panic stops running the room.",
+      "today_move": "Check one number only.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Steadier money begins with one clean practical move."
+    },
+    {
+      "id": "overthinking__money",
+      "negative_type": "overthinking",
+      "target_intent": "money",
+      "sign_name": "Quiet Calculation",
+      "quote": "Not every money thought deserves a full-body emergency.",
+      "today_move": "Open your notes and list one expense clearly.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Not every thought about money deserves your full body reaction."
+    },
+    {
+      "id": "self_doubt__money",
+      "negative_type": "self_doubt",
+      "target_intent": "money",
+      "sign_name": "Clear Value",
+      "quote": "Your value is not shrinking with your balance.",
+      "today_move": "Name one skill that already creates value.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Your value is not clarified by self-criticism."
+    },
+    {
+      "id": "exhaustion__money",
+      "negative_type": "exhaustion",
+      "target_intent": "money",
+      "sign_name": "Steady Reserve",
+      "quote": "Rested thinking makes cleaner money decisions than stress ever will.",
+      "today_move": "Pause one unnecessary purchase tonight.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Rested thinking spends and decides more cleanly."
+    },
+    {
+      "id": "loneliness__money",
+      "negative_type": "loneliness",
+      "target_intent": "money",
+      "sign_name": "Shared Relief",
+      "quote": "Money feels heavier when you believe you have to carry it alone.",
+      "today_move": "Ask one practical question about work or pay.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Support helps your resources stretch further than isolation does."
+    },
+    {
+      "id": "anger__money",
+      "negative_type": "anger",
+      "target_intent": "money",
+      "sign_name": "Calm Timing",
+      "quote": "A calmer nervous system makes a sharper money move.",
+      "today_move": "Wait before any reactive spending.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A calmer tone creates better money decisions than a heated one."
+    },
+    {
+      "id": "avoidance__money",
+      "negative_type": "avoidance",
+      "target_intent": "money",
+      "sign_name": "Open Account",
+      "quote": "What you look at becomes workable. What you avoid becomes larger.",
+      "today_move": "Open the bill, email, or task you have delayed.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "What you avoid grows fog. What you review grows power."
+    },
+    {
+      "id": "confusion__money",
+      "negative_type": "confusion",
+      "target_intent": "money",
+      "sign_name": "Grounded Gain",
+      "quote": "You do not need a miracle first. You need one clear move.",
+      "today_move": "Choose one money task and finish only that.",
+      "best_hour": "14:00–16:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not need a bigger rush. You need a clearer plan."
+    },
+    {
+      "id": "pressure__boundaries",
+      "negative_type": "pressure",
+      "target_intent": "boundaries",
+      "sign_name": "Clear Door",
+      "quote": "A boundary makes pressure measurable instead of endless.",
+      "today_move": "Say no to one extra thing.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Pressure makes everything feel personal. Boundaries make it measurable."
+    },
+    {
+      "id": "overthinking__boundaries",
+      "negative_type": "overthinking",
+      "target_intent": "boundaries",
+      "sign_name": "Sacred No",
+      "quote": "Stop overexplaining the edge you already feel in your body.",
+      "today_move": "End one explanation early.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You are easier to hear when you stop overexplaining your edge."
+    },
+    {
+      "id": "self_doubt__boundaries",
+      "negative_type": "self_doubt",
+      "target_intent": "boundaries",
+      "sign_name": "Steady Edge",
+      "quote": "A real limit does not need to be defended all day.",
+      "today_move": "Name one limit without apologizing.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A boundary does not need to be proven to be real."
+    },
+    {
+      "id": "exhaustion__boundaries",
+      "negative_type": "exhaustion",
+      "target_intent": "boundaries",
+      "sign_name": "Quiet Guard",
+      "quote": "Your no is how your rest survives.",
+      "today_move": "Protect tonight from one extra demand.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Rest gets protected the moment your no gets cleaner."
+    },
+    {
+      "id": "loneliness__boundaries",
+      "negative_type": "loneliness",
+      "target_intent": "boundaries",
+      "sign_name": "Private Room",
+      "quote": "You are allowed to want closeness without abandoning your edges.",
+      "today_move": "Reply later instead of right away.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Closeness and self-protection can exist in the same room."
+    },
+    {
+      "id": "anger__boundaries",
+      "negative_type": "anger",
+      "target_intent": "boundaries",
+      "sign_name": "Cool Distance",
+      "quote": "Distance can be kinder than heat today.",
+      "today_move": "Step back before you answer.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Distance can be kinder than heat today."
+    },
+    {
+      "id": "avoidance__boundaries",
+      "negative_type": "avoidance",
+      "target_intent": "boundaries",
+      "sign_name": "Named Line",
+      "quote": "Naming the line will clear more than vague stress ever could.",
+      "today_move": "Close one open loop you do not want to carry.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Leaving the task vague keeps the stress close. Naming the edge clears it."
+    },
+    {
+      "id": "confusion__boundaries",
+      "negative_type": "confusion",
+      "target_intent": "boundaries",
+      "sign_name": "True Limit",
+      "quote": "A clear no protects more than a rushed yes.",
+      "today_move": "Choose the calmer boundary.",
+      "best_hour": "13:00–15:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A clear limit protects more than a rushed yes."
+    },
+    {
+      "id": "pressure__momentum",
+      "negative_type": "pressure",
+      "target_intent": "momentum",
+      "sign_name": "First Motion",
+      "quote": "Momentum starts when pressure becomes one real move.",
+      "today_move": "Do the first two minutes now.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Momentum returns when the pressure breaks into one real action."
+    },
+    {
+      "id": "overthinking__momentum",
+      "negative_type": "overthinking",
+      "target_intent": "momentum",
+      "sign_name": "Clean Start",
+      "quote": "The first step shows up when the noise stops pretending to be guidance.",
+      "today_move": "Set a ten-minute timer and begin.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Thinking less about the whole thing helps the first move appear."
+    },
+    {
+      "id": "self_doubt__momentum",
+      "negative_type": "self_doubt",
+      "target_intent": "momentum",
+      "sign_name": "Forward Proof",
+      "quote": "Action builds belief faster than self-criticism ever will.",
+      "today_move": "Choose the easier version and start there.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Action builds confidence faster than self-criticism ever will."
+    },
+    {
+      "id": "exhaustion__momentum",
+      "negative_type": "exhaustion",
+      "target_intent": "momentum",
+      "sign_name": "Slow Spark",
+      "quote": "You do not need speed. You need a start soft enough to survive.",
+      "today_move": "Get up and do one small physical reset.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "You do not need speed. You need a beginning."
+    },
+    {
+      "id": "loneliness__momentum",
+      "negative_type": "loneliness",
+      "target_intent": "momentum",
+      "sign_name": "Open Path",
+      "quote": "Support still counts as movement.",
+      "today_move": "Body-double with someone for one task.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "Moving with someone safe can count as movement too."
+    },
+    {
+      "id": "anger__momentum",
+      "negative_type": "anger",
+      "target_intent": "momentum",
+      "sign_name": "Directed Fire",
+      "quote": "Put the fire into the task, not the reaction.",
+      "today_move": "Put the energy into the task, not the feeling.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "A focused action is stronger than an emotional surge."
+    },
+    {
+      "id": "avoidance__momentum",
+      "negative_type": "avoidance",
+      "target_intent": "momentum",
+      "sign_name": "Open Motion",
+      "quote": "What you start gets smaller. So does the fear around it.",
+      "today_move": "Open the thing you keep avoiding and touch it once.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "What you start shrinks what you fear."
+    },
+    {
+      "id": "confusion__momentum",
+      "negative_type": "confusion",
+      "target_intent": "momentum",
+      "sign_name": "Moving Line",
+      "quote": "One clear move will beat ten frantic ones every time.",
+      "today_move": "Pick one priority and move it forward.",
+      "best_hour": "10:00–12:00",
+      "share_tone": "soft_mystic",
+      "quote_original": "One clear move is worth more than ten frantic ones."
+    }
+  ],
+  "high_hit_priority_16": {
+    "meta": {
+      "version": "high_hit_priority_16_v1",
+      "selection_logic": "Used when user input is blank or very short. Rotates within each primary button group to keep early results strong and varied.",
+      "notes": [
+        "4 cards per primary button group.",
+        "Chosen for stronger first-impression hit rate, cleaner share feel, and broader relevance."
+      ]
+    },
+    "groups": {
+      "heavy": {
+        "label": "Money Pressure",
+        "card_ids": [
+          "pressure__money",
+          "self_doubt__money",
+          "overthinking__money",
+          "pressure__clarity"
+        ],
+        "cards": [
+          {
+            "id": "pressure__money",
+            "negative_type": "pressure",
+            "target_intent": "money",
+            "sign_name": "Steady Ledger",
+            "quote": "Money gets clearer the moment panic stops running the room.",
+            "today_move": "Check one number only.",
+            "best_hour": "14:00–16:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Steadier money begins with one clean practical move."
+          },
+          {
+            "id": "self_doubt__money",
+            "negative_type": "self_doubt",
+            "target_intent": "money",
+            "sign_name": "Clear Value",
+            "quote": "Your value is not shrinking with your balance.",
+            "today_move": "Name one skill that already creates value.",
+            "best_hour": "14:00–16:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Your value is not clarified by self-criticism."
+          },
+          {
+            "id": "overthinking__money",
+            "negative_type": "overthinking",
+            "target_intent": "money",
+            "sign_name": "Quiet Calculation",
+            "quote": "Not every money thought deserves a full-body emergency.",
+            "today_move": "Open your notes and list one expense clearly.",
+            "best_hour": "14:00–16:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Not every thought about money deserves your full body reaction."
+          },
+          {
+            "id": "pressure__clarity",
+            "negative_type": "pressure",
+            "target_intent": "clarity",
+            "sign_name": "Clear Signal",
+            "quote": "Not everything in front of you deserves the same urgency.",
+            "today_move": "Write your next step in one sentence.",
+            "best_hour": "7:00–9:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "The pressure clears when you stop treating every task as equally urgent."
+          }
+        ]
+      },
+      "foggy": {
+        "label": "Burnout",
+        "card_ids": [
+          "exhaustion__rest",
+          "exhaustion__ground",
+          "pressure__rest",
+          "exhaustion__clarity"
+        ],
+        "cards": [
+          {
+            "id": "exhaustion__rest",
+            "negative_type": "exhaustion",
+            "target_intent": "rest",
+            "sign_name": "Deep Exhale",
+            "quote": "Your body has been asking you to stop more gently than your thoughts have.",
+            "today_move": "Take a warm shower or wash your face slowly.",
+            "best_hour": "20:00–22:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Your body has been asking more gently than your thoughts."
+          },
+          {
+            "id": "exhaustion__ground",
+            "negative_type": "exhaustion",
+            "target_intent": "ground",
+            "sign_name": "Sacred Pause",
+            "quote": "Rest is not a delay. It is your system returning to itself.",
+            "today_move": "Cancel one nonessential thing tonight.",
+            "best_hour": "9:00–11:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Rest is not falling behind. It is how your strength returns."
+          },
+          {
+            "id": "pressure__rest",
+            "negative_type": "pressure",
+            "target_intent": "rest",
+            "sign_name": "Soft Return",
+            "quote": "You do not have to stay braced to stay responsible.",
+            "today_move": "Dim one light earlier tonight.",
+            "best_hour": "20:00–22:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Even the urgent mind softens when it is finally allowed to land."
+          },
+          {
+            "id": "exhaustion__clarity",
+            "negative_type": "exhaustion",
+            "target_intent": "clarity",
+            "sign_name": "Lucid Rest",
+            "quote": "A tired mind turns everything into a harder question.",
+            "today_move": "Step away from the screen for a short reset.",
+            "best_hour": "7:00–9:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Clarity often arrives after rest, not before it."
+          }
+        ]
+      },
+      "shaken": {
+        "label": "Feeling Alone",
+        "card_ids": [
+          "loneliness__connection",
+          "loneliness__self_trust",
+          "self_doubt__connection",
+          "loneliness__rest"
+        ],
+        "cards": [
+          {
+            "id": "loneliness__connection",
+            "negative_type": "loneliness",
+            "target_intent": "connection",
+            "sign_name": "Shared Light",
+            "quote": "One honest reach can change the whole temperature of a day.",
+            "today_move": "Invite one small conversation.",
+            "best_hour": "17:00–19:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "One honest reach can change the shape of a whole day."
+          },
+          {
+            "id": "loneliness__self_trust",
+            "negative_type": "loneliness",
+            "target_intent": "self_trust",
+            "sign_name": "Honest Bond",
+            "quote": "The right people will not make honesty feel unsafe.",
+            "today_move": "Say what you mean in one short message.",
+            "best_hour": "11:00–13:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "The right connection will not punish your honesty."
+          },
+          {
+            "id": "self_doubt__connection",
+            "negative_type": "self_doubt",
+            "target_intent": "connection",
+            "sign_name": "Warm Return",
+            "quote": "Being seen begins the moment you stop overediting yourself.",
+            "today_move": "Share one honest feeling with someone safe.",
+            "best_hour": "17:00–19:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Being seen starts with showing up as you are."
+          },
+          {
+            "id": "loneliness__rest",
+            "negative_type": "loneliness",
+            "target_intent": "rest",
+            "sign_name": "Warm Shelter",
+            "quote": "Rest lands more easily when you stop bracing alone.",
+            "today_move": "Send one simple goodnight text.",
+            "best_hour": "20:00–22:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Rest is easier to receive when you let someone be near the edge of it."
+          }
+        ]
+      },
+      "blocked": {
+        "label": "Need Clarity",
+        "card_ids": [
+          "overthinking__clarity",
+          "confusion__clarity",
+          "avoidance__clarity",
+          "self_doubt__self_trust"
+        ],
+        "cards": [
+          {
+            "id": "overthinking__clarity",
+            "negative_type": "overthinking",
+            "target_intent": "clarity",
+            "sign_name": "True Line",
+            "quote": "The answer gets easier to hear when the spiral gets quieter.",
+            "today_move": "Silence one distraction for ten minutes.",
+            "best_hour": "7:00–9:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "A quieter mind makes the right thing easier to hear."
+          },
+          {
+            "id": "confusion__clarity",
+            "negative_type": "confusion",
+            "target_intent": "clarity",
+            "sign_name": "North Point",
+            "quote": "You already know more than panic is letting you trust.",
+            "today_move": "Choose one answer and follow it for one hour.",
+            "best_hour": "7:00–9:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "You already know more than the noise is telling you."
+          },
+          {
+            "id": "avoidance__clarity",
+            "negative_type": "avoidance",
+            "target_intent": "clarity",
+            "sign_name": "Visible Thread",
+            "quote": "What you face becomes information. What you avoid becomes fog.",
+            "today_move": "Open the task you have been postponing.",
+            "best_hour": "7:00–9:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "What you avoid gets blurrier. What you face gets simpler."
+          },
+          {
+            "id": "self_doubt__self_trust",
+            "negative_type": "self_doubt",
+            "target_intent": "self_trust",
+            "sign_name": "Quiet Knowing",
+            "quote": "Self-trust begins where extra reassurance stops running the show.",
+            "today_move": "Choose without asking for extra reassurance.",
+            "best_hour": "11:00–13:00",
+            "share_tone": "soft_mystic",
+            "quote_original": "Self-trust grows when you stop outsourcing every answer."
+          }
+        ]
+      }
+    }
+  }
+}

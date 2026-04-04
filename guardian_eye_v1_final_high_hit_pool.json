@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "version": "high_hit_priority_16_v1",
+    "selection_logic": "Used when user input is blank or very short. Rotates within each primary button group to keep early results strong and varied.",
+    "notes": [
+      "4 cards per primary button group.",
+      "Chosen for stronger first-impression hit rate, cleaner share feel, and broader relevance."
+    ]
+  },
+  "groups": {
+    "heavy": {
+      "label": "Money Pressure",
+      "card_ids": [
+        "pressure__money",
+        "self_doubt__money",
+        "overthinking__money",
+        "pressure__clarity"
+      ],
+      "cards": [
+        {
+          "id": "pressure__money",
+          "negative_type": "pressure",
+          "target_intent": "money",
+          "sign_name": "Steady Ledger",
+          "quote": "Money gets clearer the moment panic stops running the room.",
+          "today_move": "Check one number only.",
+          "best_hour": "14:00–16:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Steadier money begins with one clean practical move."
+        },
+        {
+          "id": "self_doubt__money",
+          "negative_type": "self_doubt",
+          "target_intent": "money",
+          "sign_name": "Clear Value",
+          "quote": "Your value is not shrinking with your balance.",
+          "today_move": "Name one skill that already creates value.",
+          "best_hour": "14:00–16:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Your value is not clarified by self-criticism."
+        },
+        {
+          "id": "overthinking__money",
+          "negative_type": "overthinking",
+          "target_intent": "money",
+          "sign_name": "Quiet Calculation",
+          "quote": "Not every money thought deserves a full-body emergency.",
+          "today_move": "Open your notes and list one expense clearly.",
+          "best_hour": "14:00–16:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Not every thought about money deserves your full body reaction."
+        },
+        {
+          "id": "pressure__clarity",
+          "negative_type": "pressure",
+          "target_intent": "clarity",
+          "sign_name": "Clear Signal",
+          "quote": "Not everything in front of you deserves the same urgency.",
+          "today_move": "Write your next step in one sentence.",
+          "best_hour": "7:00–9:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "The pressure clears when you stop treating every task as equally urgent."
+        }
+      ]
+    },
+    "foggy": {
+      "label": "Burnout",
+      "card_ids": [
+        "exhaustion__rest",
+        "exhaustion__ground",
+        "pressure__rest",
+        "exhaustion__clarity"
+      ],
+      "cards": [
+        {
+          "id": "exhaustion__rest",
+          "negative_type": "exhaustion",
+          "target_intent": "rest",
+          "sign_name": "Deep Exhale",
+          "quote": "Your body has been asking you to stop more gently than your thoughts have.",
+          "today_move": "Take a warm shower or wash your face slowly.",
+          "best_hour": "20:00–22:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Your body has been asking more gently than your thoughts."
+        },
+        {
+          "id": "exhaustion__ground",
+          "negative_type": "exhaustion",
+          "target_intent": "ground",
+          "sign_name": "Sacred Pause",
+          "quote": "Rest is not a delay. It is your system returning to itself.",
+          "today_move": "Cancel one nonessential thing tonight.",
+          "best_hour": "9:00–11:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Rest is not falling behind. It is how your strength returns."
+        },
+        {
+          "id": "pressure__rest",
+          "negative_type": "pressure",
+          "target_intent": "rest",
+          "sign_name": "Soft Return",
+          "quote": "You do not have to stay braced to stay responsible.",
+          "today_move": "Dim one light earlier tonight.",
+          "best_hour": "20:00–22:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Even the urgent mind softens when it is finally allowed to land."
+        },
+        {
+          "id": "exhaustion__clarity",
+          "negative_type": "exhaustion",
+          "target_intent": "clarity",
+          "sign_name": "Lucid Rest",
+          "quote": "A tired mind turns everything into a harder question.",
+          "today_move": "Step away from the screen for a short reset.",
+          "best_hour": "7:00–9:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Clarity often arrives after rest, not before it."
+        }
+      ]
+    },
+    "shaken": {
+      "label": "Feeling Alone",
+      "card_ids": [
+        "loneliness__connection",
+        "loneliness__self_trust",
+        "self_doubt__connection",
+        "loneliness__rest"
+      ],
+      "cards": [
+        {
+          "id": "loneliness__connection",
+          "negative_type": "loneliness",
+          "target_intent": "connection",
+          "sign_name": "Shared Light",
+          "quote": "One honest reach can change the whole temperature of a day.",
+          "today_move": "Invite one small conversation.",
+          "best_hour": "17:00–19:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "One honest reach can change the shape of a whole day."
+        },
+        {
+          "id": "loneliness__self_trust",
+          "negative_type": "loneliness",
+          "target_intent": "self_trust",
+          "sign_name": "Honest Bond",
+          "quote": "The right people will not make honesty feel unsafe.",
+          "today_move": "Say what you mean in one short message.",
+          "best_hour": "11:00–13:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "The right connection will not punish your honesty."
+        },
+        {
+          "id": "self_doubt__connection",
+          "negative_type": "self_doubt",
+          "target_intent": "connection",
+          "sign_name": "Warm Return",
+          "quote": "Being seen begins the moment you stop overediting yourself.",
+          "today_move": "Share one honest feeling with someone safe.",
+          "best_hour": "17:00–19:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Being seen starts with showing up as you are."
+        },
+        {
+          "id": "loneliness__rest",
+          "negative_type": "loneliness",
+          "target_intent": "rest",
+          "sign_name": "Warm Shelter",
+          "quote": "Rest lands more easily when you stop bracing alone.",
+          "today_move": "Send one simple goodnight text.",
+          "best_hour": "20:00–22:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Rest is easier to receive when you let someone be near the edge of it."
+        }
+      ]
+    },
+    "blocked": {
+      "label": "Need Clarity",
+      "card_ids": [
+        "overthinking__clarity",
+        "confusion__clarity",
+        "avoidance__clarity",
+        "self_doubt__self_trust"
+      ],
+      "cards": [
+        {
+          "id": "overthinking__clarity",
+          "negative_type": "overthinking",
+          "target_intent": "clarity",
+          "sign_name": "True Line",
+          "quote": "The answer gets easier to hear when the spiral gets quieter.",
+          "today_move": "Silence one distraction for ten minutes.",
+          "best_hour": "7:00–9:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "A quieter mind makes the right thing easier to hear."
+        },
+        {
+          "id": "confusion__clarity",
+          "negative_type": "confusion",
+          "target_intent": "clarity",
+          "sign_name": "North Point",
+          "quote": "You already know more than panic is letting you trust.",
+          "today_move": "Choose one answer and follow it for one hour.",
+          "best_hour": "7:00–9:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "You already know more than the noise is telling you."
+        },
+        {
+          "id": "avoidance__clarity",
+          "negative_type": "avoidance",
+          "target_intent": "clarity",
+          "sign_name": "Visible Thread",
+          "quote": "What you face becomes information. What you avoid becomes fog.",
+          "today_move": "Open the task you have been postponing.",
+          "best_hour": "7:00–9:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "What you avoid gets blurrier. What you face gets simpler."
+        },
+        {
+          "id": "self_doubt__self_trust",
+          "negative_type": "self_doubt",
+          "target_intent": "self_trust",
+          "sign_name": "Quiet Knowing",
+          "quote": "Self-trust begins where extra reassurance stops running the show.",
+          "today_move": "Choose without asking for extra reassurance.",
+          "best_hour": "11:00–13:00",
+          "share_tone": "soft_mystic",
+          "quote_original": "Self-trust grows when you stop outsourcing every answer."
+        }
+      ]
+    }
+  }
+}

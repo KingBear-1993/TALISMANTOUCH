@@ -1,0 +1,951 @@
+{
+  "meta": {
+    "version": "priority_copy_pool_top20_v1",
+    "source": "guardian_eye_button_copy_4x100_v1.json",
+    "notes": [
+      "Curated top-20 priority pool for each primary emotion button.",
+      "Each group contains 20 unique lines split into three preferred surfaces: home, prelude, export.",
+      "Home = shortest and easiest to identify with at first glance.",
+      "Prelude = softer ritual-transition lines with movement or regulation feel.",
+      "Export = strongest screenshot/share lines."
+    ]
+  },
+  "groups": [
+    {
+      "id": "money_pressure",
+      "label": "Money Pressure",
+      "top20_ranked": [
+        {
+          "rank": 1,
+          "source_index": 1,
+          "text": "Your worth is not this month's numbers.",
+          "surface": "home"
+        },
+        {
+          "rank": 2,
+          "source_index": 21,
+          "text": "You are allowed to breathe before you budget.",
+          "surface": "home"
+        },
+        {
+          "rank": 3,
+          "source_index": 25,
+          "text": "You are allowed to be gentle with yourself around money.",
+          "surface": "home"
+        },
+        {
+          "rank": 4,
+          "source_index": 41,
+          "text": "Money fear gets louder when your whole future lands on tonight.",
+          "surface": "home"
+        },
+        {
+          "rank": 5,
+          "source_index": 61,
+          "text": "One clear money move can take some power back from the panic.",
+          "surface": "home"
+        },
+        {
+          "rank": 6,
+          "source_index": 81,
+          "text": "Relief around money can start with one honest number.",
+          "surface": "home"
+        },
+        {
+          "rank": 7,
+          "source_index": 28,
+          "text": "You are allowed to stabilize tonight before you solve next month.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 8,
+          "source_index": 34,
+          "text": "You are allowed to choose one next move.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 9,
+          "source_index": 51,
+          "text": "Money fear gets louder when you confuse urgency with truth.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 10,
+          "source_index": 47,
+          "text": "Money fear gets louder when one bill turns into your whole identity.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 11,
+          "source_index": 69,
+          "text": "One clear money move can break the pressure into pieces.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 12,
+          "source_index": 80,
+          "text": "One clear money move can keep panic from running the room.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 13,
+          "source_index": 82,
+          "text": "Relief around money can start with one smaller decision.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 14,
+          "source_index": 4,
+          "text": "Your worth is not your savings account.",
+          "surface": "export"
+        },
+        {
+          "rank": 15,
+          "source_index": 14,
+          "text": "Your worth is not how much you owe.",
+          "surface": "export"
+        },
+        {
+          "rank": 16,
+          "source_index": 35,
+          "text": "You are allowed to stop doom-calculating.",
+          "surface": "export"
+        },
+        {
+          "rank": 17,
+          "source_index": 45,
+          "text": "Money fear gets louder when shame is driving the math.",
+          "surface": "export"
+        },
+        {
+          "rank": 18,
+          "source_index": 64,
+          "text": "One clear money move can turn shame into information.",
+          "surface": "export"
+        },
+        {
+          "rank": 19,
+          "source_index": 79,
+          "text": "One clear money move can return you to the part that can handle things.",
+          "surface": "export"
+        },
+        {
+          "rank": 20,
+          "source_index": 100,
+          "text": "Relief around money can start with one clear move.",
+          "surface": "export"
+        }
+      ],
+      "priority_pools": {
+        "home": [
+          {
+            "rank": 1,
+            "source_index": 1,
+            "text": "Your worth is not this month's numbers."
+          },
+          {
+            "rank": 2,
+            "source_index": 21,
+            "text": "You are allowed to breathe before you budget."
+          },
+          {
+            "rank": 3,
+            "source_index": 25,
+            "text": "You are allowed to be gentle with yourself around money."
+          },
+          {
+            "rank": 4,
+            "source_index": 41,
+            "text": "Money fear gets louder when your whole future lands on tonight."
+          },
+          {
+            "rank": 5,
+            "source_index": 61,
+            "text": "One clear money move can take some power back from the panic."
+          },
+          {
+            "rank": 6,
+            "source_index": 81,
+            "text": "Relief around money can start with one honest number."
+          }
+        ],
+        "prelude": [
+          {
+            "rank": 7,
+            "source_index": 28,
+            "text": "You are allowed to stabilize tonight before you solve next month."
+          },
+          {
+            "rank": 8,
+            "source_index": 34,
+            "text": "You are allowed to choose one next move."
+          },
+          {
+            "rank": 9,
+            "source_index": 51,
+            "text": "Money fear gets louder when you confuse urgency with truth."
+          },
+          {
+            "rank": 10,
+            "source_index": 47,
+            "text": "Money fear gets louder when one bill turns into your whole identity."
+          },
+          {
+            "rank": 11,
+            "source_index": 69,
+            "text": "One clear money move can break the pressure into pieces."
+          },
+          {
+            "rank": 12,
+            "source_index": 80,
+            "text": "One clear money move can keep panic from running the room."
+          },
+          {
+            "rank": 13,
+            "source_index": 82,
+            "text": "Relief around money can start with one smaller decision."
+          }
+        ],
+        "export": [
+          {
+            "rank": 14,
+            "source_index": 4,
+            "text": "Your worth is not your savings account."
+          },
+          {
+            "rank": 15,
+            "source_index": 14,
+            "text": "Your worth is not how much you owe."
+          },
+          {
+            "rank": 16,
+            "source_index": 35,
+            "text": "You are allowed to stop doom-calculating."
+          },
+          {
+            "rank": 17,
+            "source_index": 45,
+            "text": "Money fear gets louder when shame is driving the math."
+          },
+          {
+            "rank": 18,
+            "source_index": 64,
+            "text": "One clear money move can turn shame into information."
+          },
+          {
+            "rank": 19,
+            "source_index": 79,
+            "text": "One clear money move can return you to the part that can handle things."
+          },
+          {
+            "rank": 20,
+            "source_index": 100,
+            "text": "Relief around money can start with one clear move."
+          }
+        ]
+      }
+    },
+    {
+      "id": "burnout",
+      "label": "Burnout",
+      "top20_ranked": [
+        {
+          "rank": 1,
+          "source_index": 1,
+          "text": "Rest is not falling behind.",
+          "surface": "home"
+        },
+        {
+          "rank": 2,
+          "source_index": 5,
+          "text": "Rest is not something you have to earn.",
+          "surface": "home"
+        },
+        {
+          "rank": 3,
+          "source_index": 41,
+          "text": "Being tired does not mean you are lazy.",
+          "surface": "home"
+        },
+        {
+          "rank": 4,
+          "source_index": 28,
+          "text": "You were not made to run on fumes and call it normal.",
+          "surface": "home"
+        },
+        {
+          "rank": 5,
+          "source_index": 69,
+          "text": "Your body has been asking for real sleep.",
+          "surface": "home"
+        },
+        {
+          "rank": 6,
+          "source_index": 100,
+          "text": "Softness can help you come back to yourself.",
+          "surface": "home"
+        },
+        {
+          "rank": 7,
+          "source_index": 21,
+          "text": "You were not made to stay available to everyone all the time.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 8,
+          "source_index": 34,
+          "text": "You were not made to keep giving from an empty place.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 9,
+          "source_index": 48,
+          "text": "Being tired does not mean you should push harder.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 10,
+          "source_index": 67,
+          "text": "Your body has been asking for a gentler pace.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 11,
+          "source_index": 74,
+          "text": "Your body has been asking for a chance to exhale.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 12,
+          "source_index": 88,
+          "text": "Softness can give your nervous system a landing place.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 13,
+          "source_index": 89,
+          "text": "Softness can protect what is left of your energy.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 14,
+          "source_index": 3,
+          "text": "Rest is not laziness.",
+          "surface": "export"
+        },
+        {
+          "rank": 15,
+          "source_index": 8,
+          "text": "Rest is not the enemy of progress.",
+          "surface": "export"
+        },
+        {
+          "rank": 16,
+          "source_index": 27,
+          "text": "You were not made to earn love through overfunctioning.",
+          "surface": "export"
+        },
+        {
+          "rank": 17,
+          "source_index": 45,
+          "text": "Being tired does not mean you are failing.",
+          "surface": "export"
+        },
+        {
+          "rank": 18,
+          "source_index": 78,
+          "text": "Your body has been asking for stillness without guilt.",
+          "surface": "export"
+        },
+        {
+          "rank": 19,
+          "source_index": 82,
+          "text": "Softness can do more for you than another push.",
+          "surface": "export"
+        },
+        {
+          "rank": 20,
+          "source_index": 94,
+          "text": "Softness can remind you that you are not a machine.",
+          "surface": "export"
+        }
+      ],
+      "priority_pools": {
+        "home": [
+          {
+            "rank": 1,
+            "source_index": 1,
+            "text": "Rest is not falling behind."
+          },
+          {
+            "rank": 2,
+            "source_index": 5,
+            "text": "Rest is not something you have to earn."
+          },
+          {
+            "rank": 3,
+            "source_index": 41,
+            "text": "Being tired does not mean you are lazy."
+          },
+          {
+            "rank": 4,
+            "source_index": 28,
+            "text": "You were not made to run on fumes and call it normal."
+          },
+          {
+            "rank": 5,
+            "source_index": 69,
+            "text": "Your body has been asking for real sleep."
+          },
+          {
+            "rank": 6,
+            "source_index": 100,
+            "text": "Softness can help you come back to yourself."
+          }
+        ],
+        "prelude": [
+          {
+            "rank": 7,
+            "source_index": 21,
+            "text": "You were not made to stay available to everyone all the time."
+          },
+          {
+            "rank": 8,
+            "source_index": 34,
+            "text": "You were not made to keep giving from an empty place."
+          },
+          {
+            "rank": 9,
+            "source_index": 48,
+            "text": "Being tired does not mean you should push harder."
+          },
+          {
+            "rank": 10,
+            "source_index": 67,
+            "text": "Your body has been asking for a gentler pace."
+          },
+          {
+            "rank": 11,
+            "source_index": 74,
+            "text": "Your body has been asking for a chance to exhale."
+          },
+          {
+            "rank": 12,
+            "source_index": 88,
+            "text": "Softness can give your nervous system a landing place."
+          },
+          {
+            "rank": 13,
+            "source_index": 89,
+            "text": "Softness can protect what is left of your energy."
+          }
+        ],
+        "export": [
+          {
+            "rank": 14,
+            "source_index": 3,
+            "text": "Rest is not laziness."
+          },
+          {
+            "rank": 15,
+            "source_index": 8,
+            "text": "Rest is not the enemy of progress."
+          },
+          {
+            "rank": 16,
+            "source_index": 27,
+            "text": "You were not made to earn love through overfunctioning."
+          },
+          {
+            "rank": 17,
+            "source_index": 45,
+            "text": "Being tired does not mean you are failing."
+          },
+          {
+            "rank": 18,
+            "source_index": 78,
+            "text": "Your body has been asking for stillness without guilt."
+          },
+          {
+            "rank": 19,
+            "source_index": 82,
+            "text": "Softness can do more for you than another push."
+          },
+          {
+            "rank": 20,
+            "source_index": 94,
+            "text": "Softness can remind you that you are not a machine."
+          }
+        ]
+      }
+    },
+    {
+      "id": "feeling_alone",
+      "label": "Feeling Alone",
+      "top20_ranked": [
+        {
+          "rank": 1,
+          "source_index": 1,
+          "text": "You were never meant to carry all of this alone.",
+          "surface": "home"
+        },
+        {
+          "rank": 2,
+          "source_index": 21,
+          "text": "Being seen can start with one honest sentence.",
+          "surface": "home"
+        },
+        {
+          "rank": 3,
+          "source_index": 41,
+          "text": "Silence is not proof that no one cares.",
+          "surface": "home"
+        },
+        {
+          "rank": 4,
+          "source_index": 61,
+          "text": "The right people will not punish your honesty.",
+          "surface": "home"
+        },
+        {
+          "rank": 5,
+          "source_index": 83,
+          "text": "You are still allowed to need warmth.",
+          "surface": "home"
+        },
+        {
+          "rank": 6,
+          "source_index": 100,
+          "text": "You are still allowed to believe support can still find you.",
+          "surface": "home"
+        },
+        {
+          "rank": 7,
+          "source_index": 5,
+          "text": "You were never meant to hold yourself together in silence forever.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 8,
+          "source_index": 24,
+          "text": "Being seen can start with one request without apology.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 9,
+          "source_index": 25,
+          "text": "Being seen can start with one person who feels safe.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 10,
+          "source_index": 50,
+          "text": "Silence is not proof that your needs are unreasonable.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 11,
+          "source_index": 70,
+          "text": "The right people will not make support feel like debt.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 12,
+          "source_index": 72,
+          "text": "The right people will not ask you to earn warmth.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 13,
+          "source_index": 94,
+          "text": "You are still allowed to want support without a crisis.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 14,
+          "source_index": 12,
+          "text": "You were never meant to earn closeness by being low-maintenance.",
+          "surface": "export"
+        },
+        {
+          "rank": 15,
+          "source_index": 48,
+          "text": "Silence is not proof that you are hard to love.",
+          "surface": "export"
+        },
+        {
+          "rank": 16,
+          "source_index": 63,
+          "text": "The right people will not make you audition for care.",
+          "surface": "export"
+        },
+        {
+          "rank": 17,
+          "source_index": 73,
+          "text": "The right people will not love only the edited parts.",
+          "surface": "export"
+        },
+        {
+          "rank": 18,
+          "source_index": 82,
+          "text": "You are still allowed to ask to be understood.",
+          "surface": "export"
+        },
+        {
+          "rank": 19,
+          "source_index": 93,
+          "text": "You are still allowed to need a witness.",
+          "surface": "export"
+        },
+        {
+          "rank": 20,
+          "source_index": 98,
+          "text": "You are still allowed to want to feel chosen.",
+          "surface": "export"
+        }
+      ],
+      "priority_pools": {
+        "home": [
+          {
+            "rank": 1,
+            "source_index": 1,
+            "text": "You were never meant to carry all of this alone."
+          },
+          {
+            "rank": 2,
+            "source_index": 21,
+            "text": "Being seen can start with one honest sentence."
+          },
+          {
+            "rank": 3,
+            "source_index": 41,
+            "text": "Silence is not proof that no one cares."
+          },
+          {
+            "rank": 4,
+            "source_index": 61,
+            "text": "The right people will not punish your honesty."
+          },
+          {
+            "rank": 5,
+            "source_index": 83,
+            "text": "You are still allowed to need warmth."
+          },
+          {
+            "rank": 6,
+            "source_index": 100,
+            "text": "You are still allowed to believe support can still find you."
+          }
+        ],
+        "prelude": [
+          {
+            "rank": 7,
+            "source_index": 5,
+            "text": "You were never meant to hold yourself together in silence forever."
+          },
+          {
+            "rank": 8,
+            "source_index": 24,
+            "text": "Being seen can start with one request without apology."
+          },
+          {
+            "rank": 9,
+            "source_index": 25,
+            "text": "Being seen can start with one person who feels safe."
+          },
+          {
+            "rank": 10,
+            "source_index": 50,
+            "text": "Silence is not proof that your needs are unreasonable."
+          },
+          {
+            "rank": 11,
+            "source_index": 70,
+            "text": "The right people will not make support feel like debt."
+          },
+          {
+            "rank": 12,
+            "source_index": 72,
+            "text": "The right people will not ask you to earn warmth."
+          },
+          {
+            "rank": 13,
+            "source_index": 94,
+            "text": "You are still allowed to want support without a crisis."
+          }
+        ],
+        "export": [
+          {
+            "rank": 14,
+            "source_index": 12,
+            "text": "You were never meant to earn closeness by being low-maintenance."
+          },
+          {
+            "rank": 15,
+            "source_index": 48,
+            "text": "Silence is not proof that you are hard to love."
+          },
+          {
+            "rank": 16,
+            "source_index": 63,
+            "text": "The right people will not make you audition for care."
+          },
+          {
+            "rank": 17,
+            "source_index": 73,
+            "text": "The right people will not love only the edited parts."
+          },
+          {
+            "rank": 18,
+            "source_index": 82,
+            "text": "You are still allowed to ask to be understood."
+          },
+          {
+            "rank": 19,
+            "source_index": 93,
+            "text": "You are still allowed to need a witness."
+          },
+          {
+            "rank": 20,
+            "source_index": 98,
+            "text": "You are still allowed to want to feel chosen."
+          }
+        ]
+      }
+    },
+    {
+      "id": "need_clarity",
+      "label": "Need Clarity",
+      "top20_ranked": [
+        {
+          "rank": 1,
+          "source_index": 1,
+          "text": "Overthinking is not intuition.",
+          "surface": "home"
+        },
+        {
+          "rank": 2,
+          "source_index": 21,
+          "text": "The next step does not need to be loud to be real.",
+          "surface": "home"
+        },
+        {
+          "rank": 3,
+          "source_index": 41,
+          "text": "You already know more than panic wants you to believe.",
+          "surface": "home"
+        },
+        {
+          "rank": 4,
+          "source_index": 61,
+          "text": "Confusion gets louder when fear is driving.",
+          "surface": "home"
+        },
+        {
+          "rank": 5,
+          "source_index": 81,
+          "text": "One clear move can break a week-long spiral.",
+          "surface": "home"
+        },
+        {
+          "rank": 6,
+          "source_index": 86,
+          "text": "One clear move can make the fog less convincing.",
+          "surface": "home"
+        },
+        {
+          "rank": 7,
+          "source_index": 22,
+          "text": "The next step does not need to solve everything at once.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 8,
+          "source_index": 24,
+          "text": "The next step does not need to arrive with certainty.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 9,
+          "source_index": 48,
+          "text": "You already know more than your self-doubt is granting.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 10,
+          "source_index": 65,
+          "text": "Confusion gets louder when you are trying to think from exhaustion.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 11,
+          "source_index": 75,
+          "text": "Confusion gets louder when the loop feels safer than the step.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 12,
+          "source_index": 82,
+          "text": "One clear move can give your mind a place to land.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 13,
+          "source_index": 97,
+          "text": "One clear move can start momentum without demanding certainty.",
+          "surface": "prelude"
+        },
+        {
+          "rank": 14,
+          "source_index": 5,
+          "text": "Overthinking is not a plan.",
+          "surface": "export"
+        },
+        {
+          "rank": 15,
+          "source_index": 36,
+          "text": "The next step does not need to carry your entire future.",
+          "surface": "export"
+        },
+        {
+          "rank": 16,
+          "source_index": 55,
+          "text": "You already know more than the late-night version of you can trust.",
+          "surface": "export"
+        },
+        {
+          "rank": 17,
+          "source_index": 66,
+          "text": "Confusion gets louder when you confuse panic with guidance.",
+          "surface": "export"
+        },
+        {
+          "rank": 18,
+          "source_index": 79,
+          "text": "Confusion gets louder when shame is whispering under the analysis.",
+          "surface": "export"
+        },
+        {
+          "rank": 19,
+          "source_index": 87,
+          "text": "One clear move can turn thinking into traction.",
+          "surface": "export"
+        },
+        {
+          "rank": 20,
+          "source_index": 100,
+          "text": "One clear move can stop the loop from leading the whole day.",
+          "surface": "export"
+        }
+      ],
+      "priority_pools": {
+        "home": [
+          {
+            "rank": 1,
+            "source_index": 1,
+            "text": "Overthinking is not intuition."
+          },
+          {
+            "rank": 2,
+            "source_index": 21,
+            "text": "The next step does not need to be loud to be real."
+          },
+          {
+            "rank": 3,
+            "source_index": 41,
+            "text": "You already know more than panic wants you to believe."
+          },
+          {
+            "rank": 4,
+            "source_index": 61,
+            "text": "Confusion gets louder when fear is driving."
+          },
+          {
+            "rank": 5,
+            "source_index": 81,
+            "text": "One clear move can break a week-long spiral."
+          },
+          {
+            "rank": 6,
+            "source_index": 86,
+            "text": "One clear move can make the fog less convincing."
+          }
+        ],
+        "prelude": [
+          {
+            "rank": 7,
+            "source_index": 22,
+            "text": "The next step does not need to solve everything at once."
+          },
+          {
+            "rank": 8,
+            "source_index": 24,
+            "text": "The next step does not need to arrive with certainty."
+          },
+          {
+            "rank": 9,
+            "source_index": 48,
+            "text": "You already know more than your self-doubt is granting."
+          },
+          {
+            "rank": 10,
+            "source_index": 65,
+            "text": "Confusion gets louder when you are trying to think from exhaustion."
+          },
+          {
+            "rank": 11,
+            "source_index": 75,
+            "text": "Confusion gets louder when the loop feels safer than the step."
+          },
+          {
+            "rank": 12,
+            "source_index": 82,
+            "text": "One clear move can give your mind a place to land."
+          },
+          {
+            "rank": 13,
+            "source_index": 97,
+            "text": "One clear move can start momentum without demanding certainty."
+          }
+        ],
+        "export": [
+          {
+            "rank": 14,
+            "source_index": 5,
+            "text": "Overthinking is not a plan."
+          },
+          {
+            "rank": 15,
+            "source_index": 36,
+            "text": "The next step does not need to carry your entire future."
+          },
+          {
+            "rank": 16,
+            "source_index": 55,
+            "text": "You already know more than the late-night version of you can trust."
+          },
+          {
+            "rank": 17,
+            "source_index": 66,
+            "text": "Confusion gets louder when you confuse panic with guidance."
+          },
+          {
+            "rank": 18,
+            "source_index": 79,
+            "text": "Confusion gets louder when shame is whispering under the analysis."
+          },
+          {
+            "rank": 19,
+            "source_index": 87,
+            "text": "One clear move can turn thinking into traction."
+          },
+          {
+            "rank": 20,
+            "source_index": 100,
+            "text": "One clear move can stop the loop from leading the whole day."
+          }
+        ]
+      }
+    }
+  ]
+}
